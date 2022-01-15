@@ -26,7 +26,7 @@ async def is_scam(message):
             return True
         message = message.replace(message_link, '')
 
-    if message_links and 'nitro' in message:
+    if message_links and 'nitro' in ''.join(message.split()):
         return True
     return False
 
