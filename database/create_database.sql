@@ -2,16 +2,16 @@
 Not in table = Timeout mode
 In table = Ban mode
 */
-create table modes(
+create table if not exists modes(
     guild integer primary key
 );
 
-create table punishments(
+create table if not exists punishments(
     guild integer primary key,
     count integer not null check(count > 0)
 );
 
-create table logs(
+create table if not exists logs(
     guild integer primary key,
     channel integer not null
 );
