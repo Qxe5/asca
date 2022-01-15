@@ -35,7 +35,7 @@ if __name__ == '__main__':
         await process(message, bot.user)
 
     @bot.listen()
-    async def on_message_edit(previous_message, current_message):
+    async def on_message_edit(previous_message, current_message): # pylint: disable=unused-argument
         '''Handle message edits'''
         await process(current_message, bot.user)
 
