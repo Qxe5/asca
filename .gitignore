@@ -1,3 +1,4 @@
+.pylintrc
 token
 database/database
 __pycache__/
