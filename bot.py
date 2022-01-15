@@ -37,8 +37,7 @@ if __name__ == '__main__':
     @bot.listen()
     async def on_message_edit(previous_message, current_message):
         '''Handle message edits'''
-        if current_message != previous_message:
-            await process(current_message, bot.user)
+        await process(current_message, bot.user)
 
     # commands
     @bot.slash_command()
