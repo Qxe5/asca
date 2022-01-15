@@ -1,0 +1,106 @@
+'''Database interface'''
+from enum import Enum
+import sqlite3
+
+MODES = Enum('MODES', 'TIMEOUT BAN')
+
+async def connect():
+    '''Connect to the database and return a (connection, cursor) pair'''
+    database_path = 'database/database'
+    connection = sqlite3.connect(database_path)
+    cursor = connection.cursor()
+
+    createdb_script_path = 'database/create_database.sql'
+    with open(createdb_script_path, encoding='utf-8') as createdb_script_file:
+        cursor.executescript(createdb_script_file.read())
+
+    return (connection, cursor)
+
+async def disconnect(connection):
+    '''Commit changes to the database and disconnect from it'''
+    connection.commit()
+    connection.close()
+
+async def getmode(guild):
+    '''Get and return whether the guild is in Timout or Ban mode'''
+    connection, cursor = await connect()
+
+    mode = cursor.execute('select * from modes where guild = ?', [guild]).fetchone()
+
+    await disconnect(connection)
+
+    if not mode:
+        return MODES.TIMEOUT
+    return MODES.BAN
+
+async def set_timeoutmode(guild):
+    '''Set the punishment mode of the guild to Timeout'''
+    connection, cursor = await connect()
+
+    cursor.execute('delete from modes where guild = ?', [guild])
+
+    await disconnect(connection)
+
+async def setbanmode(guild):
+    '''Set the punishment mode of the guild to Ban'''
+    connection, cursor = await connect()
+
+    cursor.execute('insert into modes values(?)', [guild])
+
+    await disconnect(connection)
+
+async def get_punishment_count(guild):
+    '''Get and return the timeouts/bans for the guild'''
+    connection, cursor = await connect()
+
+    count = cursor.execute('select count from punishments where guild = ?', [guild]).fetchone()
+
+    await disconnect(connection)
+
+    if not count:
+        return 0
+    return count[0]
+
+async def count_punishment(guild):
+    '''Increment punishment count for the guild'''
+    connection, cursor = await connect()
+
+    count = cursor.execute('select count from punishments where guild = ?', [guild]).fetchone()
+
+    if not count:
+        cursor.execute('insert into punishments values (?, ?)', [guild, 1])
+    else:
+        count = count[0]
+
+        cursor.execute('update punishments set count = ? where guild = ?', [count + 1, guild])
+
+    await disconnect(connection)
+
+async def get_logging_channel(guild):
+    '''Get and return the logging channel of the guild (or None if it is not set)'''
+    connection, cursor = await connect()
+
+    channel = cursor.execute('select channel from logs where guild = ?', [guild]).fetchone()
+
+    await disconnect(connection)
+
+    if channel:
+        channel = channel[0]
+
+    return channel
+
+async def set_logging_channel(guild, channel):
+    '''Sets the logging channel of the guild'''
+    connection, cursor = await connect()
+
+    cursor.execute('replace into logs values (?, ?)', [guild, channel])
+
+    await disconnect(connection)
+
+async def delete_logging_channel(guild):
+    '''Delete the logging channel of the guild'''
+    connection, cursor = await connect()
+
+    cursor.execute('delete from logs where guild = ?', [guild])
+
+    await disconnect(connection)
