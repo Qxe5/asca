@@ -13,7 +13,7 @@ if __name__ == '__main__':
     logging.basicConfig()
 
     # init
-    bot = discord.Bot()
+    bot = discord.Bot(activity=discord.Activity(type=discord.ActivityType.listening, name='/'))
 
     @bot.listen()
     async def on_ready():
