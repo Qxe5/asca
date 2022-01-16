@@ -9,7 +9,8 @@ from library.detector import process
 from library.error import notadmin
 from library.links import update
 
-if __name__ == '__main__':
+def main():
+    '''Start the bot'''
     logging.basicConfig()
 
     # init
@@ -98,3 +99,6 @@ if __name__ == '__main__':
     with open('token', encoding='utf-8') as token_file:
         token = token_file.read()
     bot.run(token)
+
+if __name__ == '__main__':
+    main()
