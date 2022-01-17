@@ -19,7 +19,7 @@ def main():
     @bot.listen()
     async def on_ready():
         '''Print info when ready'''
-        print('Logged in as', bot.user, 'via pycord', discord.__version__, f'({len(bot.guilds)} guilds)')
+        print('Logged in as', bot.user, f'({len(bot.guilds)} guilds)')
 
     # update scam links
     @tasks.loop(hours=24)
