@@ -6,7 +6,7 @@ from discord.ext import tasks, commands
 
 from library import db
 from library.detector import process
-from library.error import notadmin
+from library.error import cantlog, notadmin
 from library.links import update
 
 def main():
@@ -59,7 +59,10 @@ def main():
     @switchmode.error
     async def switchmode_error(ctx, error):
         '''Handle a lack of the Administrator permission'''
-        await notadmin(ctx, error)
+        if isinstance(error, commands.MissingPermissions):
+            await notadmin(ctx)
+        else:
+            print(type(error), error)
 
     @bot.slash_command()
     @commands.guild_only()
@@ -70,6 +73,7 @@ def main():
 
     @bot.slash_command()
     @commands.guild_only()
+    @commands.bot_has_permissions(send_messages=True)
     @commands.has_permissions(administrator=True)
     async def log(ctx):
         '''Set this channel as the logging channel for punishments'''
@@ -80,7 +84,12 @@ def main():
     @log.error
     async def log_error(ctx, error):
         '''Handle a lack of the Administrator permission'''
-        await notadmin(ctx, error)
+        if isinstance(error, commands.BotMissingPermissions):
+            await cantlog(ctx)
+        elif isinstance(error, commands.MissingPermissions):
+            await notadmin(ctx)
+        else:
+            print(type(error), error)
 
     @bot.slash_command()
     @commands.guild_only()
@@ -93,7 +102,10 @@ def main():
     @stoplog.error
     async def stoplog_error(ctx, error):
         '''Handle a lack of the Administrator permission'''
-        await notadmin(ctx, error)
+        if isinstance(error, commands.MissingPermissions):
+            await notadmin(ctx)
+        else:
+            print(type(error), error)
 
     # authenticate
     with open('token', encoding='utf-8') as token_file:

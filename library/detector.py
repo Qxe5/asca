@@ -102,7 +102,10 @@ async def log(message):
                     action = 'Banned'
 
             log_message = f'**{action}** {message.author.mention} for ```{scam_message}```'
-            await logging_channel.send(log_message)
+            try:
+                await logging_channel.send(log_message)
+            except Forbidden:
+                await db.delete_logging_channel(message.guild.id)
         else:
             await db.delete_logging_channel(message.guild.id)
 
