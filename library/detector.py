@@ -68,8 +68,11 @@ async def punish(message):
         await delete(message)
         return False
 
-    if message.author.guild_permissions.moderate_members:
-        await message.reply('Scam detected but you have the `Moderate Members` permission')
+    has_moderate_members = message.author.guild_permissions.moderate_members
+    has_ban_members = message.author.guild_permissions.ban_members
+    if has_moderate_members or has_ban_members:
+        response = 'Scam detected but you have the `Moderate Members` or `Ban Members` permission'
+        await message.reply(response)
         return False
 
     mode = await db.getmode(message.guild.id)
