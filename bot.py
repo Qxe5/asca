@@ -4,6 +4,7 @@ import logging
 import discord
 from discord.ext import tasks, commands
 
+from cogs.status import Status
 from library import db
 from library.detector import process
 from library.error import cantlog, notadmin
@@ -14,7 +15,7 @@ def main():
     logging.basicConfig()
 
     # init
-    bot = discord.Bot(activity=discord.Activity(type=discord.ActivityType.listening, name='/'))
+    bot = discord.Bot()
 
     @bot.listen()
     async def on_ready():
@@ -106,6 +107,9 @@ def main():
             await notadmin(ctx)
         else:
             print(type(error), error)
+
+    # add cogs
+    bot.add_cog(Status(bot))
 
     # authenticate
     with open('token', encoding='utf-8') as token_file:
