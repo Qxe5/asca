@@ -11,8 +11,15 @@ from library.links import links
 
 permission_error_template = Template('Scam detected, but I need the `$permission` permission')
 
+async def lognotlink(message):
+    '''Log a detected scam which is not in the scam links list'''
+    notlinks_path = '../notlinks'
+    with open(notlinks_path, mode='a', encoding='utf-8') as notlinks_file:
+        notlinks_file.write(f'{message}\n\n')
+
 async def is_scam(message):
     '''Determine and return whether the message is a scam'''
+    original_message = message
     message = message.lower()
 
     link_extractor = URLExtract()
@@ -28,6 +35,7 @@ async def is_scam(message):
         message = message.replace(message_link, '')
 
     if message_links and 'nitro' in ''.join(message.split()):
+        await lognotlink(original_message)
         return True
     return False
 
