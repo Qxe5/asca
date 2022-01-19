@@ -3,7 +3,7 @@ from datetime import timedelta
 from string import Template
 from urllib.parse import urlparse
 
-from discord import DMChannel, User, Forbidden
+from discord import Embed, Colour, DMChannel, User, Forbidden
 from urlextract import URLExtract
 
 from library import db
@@ -112,9 +112,18 @@ async def log(message):
                 case db.MODES.BAN:
                     action = 'Banned'
 
-            log_message = f'**{action}** {message.author.mention} for ```{scam_message}```'
+            description = f'**Message**```{scam_message}```'
+            logembed = Embed(colour=Colour.red(), description=description)
+
+            title = f'{action} {message.author}'
+            icon_url = ('https://cdn.discordapp.com'
+                        '/attachments/933434052621512734/933435123255373875/banicon.png')
+            logembed.set_author(icon_url=icon_url, name=title)
+
+            logembed.set_footer(text=message.author.id)
+
             try:
-                await logging_channel.send(log_message)
+                await logging_channel.send(embed=logembed)
             except Forbidden:
                 await db.delete_logging_channel(message.guild.id)
         else:
