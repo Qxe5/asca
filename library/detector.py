@@ -34,7 +34,7 @@ async def is_scam(message):
             return True
         message = message.replace(message_link, '')
 
-    if message_links and 'nitro' in ''.join(message.split()):
+    if message_links and ('nitro' in ''.join(message.split()) or 'who is first?' in message):
         await lognotlink(original_message)
         return True
     return False
