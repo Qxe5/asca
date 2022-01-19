@@ -23,7 +23,7 @@ def main():
         print('Logged in as', bot.user, f'({len(bot.guilds)} guilds)')
 
     # update scam links
-    @tasks.loop(hours=24)
+    @tasks.loop(hours=1)
     async def update_scamlinks():
         '''Update the scam links periodically'''
         await update()
