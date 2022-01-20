@@ -24,7 +24,7 @@ async def is_scam(message):
 
     link_extractor = URLExtract()
     link_extractor.update_when_older(1)
-    message = message.replace('http', ' http')
+    message = message.replace('http', ' http').replace('://\n', '://')
     urls = link_extractor.find_urls(message, with_schema_only=True, only_unique=True)
     nitrolink = 'https://discord.gift'
     message_links = [urlparse(url).netloc for url in urls if not url.startswith(nitrolink)]
