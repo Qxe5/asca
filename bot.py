@@ -37,9 +37,10 @@ def main():
         await process(message, bot.user)
 
     @bot.listen()
-    async def on_message_edit(previous_message, current_message): # pylint: disable=unused-argument
+    async def on_message_edit(previous_message, current_message):
         '''Handle message edits'''
-        await process(current_message, bot.user)
+        if current_message.content != previous_message.content:
+            await process(current_message, bot.user)
 
     # commands
     @bot.slash_command()
