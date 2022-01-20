@@ -17,6 +17,25 @@ async def lognotlink(message):
     with open(notlinks_path, mode='a', encoding='utf-8') as notlinks_file:
         notlinks_file.write(f'{message}\n\n')
 
+async def removewhitespace(message):
+    '''Remove whitespace from message'''
+    return ''.join(message.split())
+
+async def contains_maliciousterm(message):
+    '''Determine and return whether the message contains a malicious term'''
+    message = await removewhitespace(message)
+
+    terms = [
+        'nitro',
+        await removewhitespace('who is first?'),
+        await removewhitespace('who will catch this gift?')
+    ]
+
+    for term in terms:
+        if term in message:
+            return True
+    return False
+
 async def is_scam(message):
     '''Determine and return whether the message is a scam'''
     original_message = message
@@ -34,7 +53,7 @@ async def is_scam(message):
             return True
         message = message.replace(message_link, '')
 
-    if message_links and ('nitro' in ''.join(message.split()) or 'who is first?' in message):
+    if message_links and await contains_maliciousterm(message):
         await lognotlink(original_message)
         return True
     return False
