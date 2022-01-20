@@ -116,11 +116,11 @@ async def log(message):
             logembed = Embed(colour=Colour.red(), description=description)
 
             title = f'{action} {message.author}'
+            logembed.set_author(icon_url=message.author.display_avatar.url, name=title)
+
             icon_url = ('https://cdn.discordapp.com'
                         '/attachments/933434052621512734/933435123255373875/banicon.png')
-            logembed.set_author(icon_url=icon_url, name=title)
-
-            logembed.set_footer(text=message.author.id)
+            logembed.set_footer(icon_url=icon_url, text=message.author.id)
 
             try:
                 await logging_channel.send(embed=logembed)
