@@ -11,4 +11,5 @@ async def update():
     if not response.ok:
         return
 
+    links.clear()
     links.extend(response.text.splitlines())
