@@ -39,6 +39,13 @@ async def is_scam(message):
         return True
     return False
 
+async def reply(message, replymessage):
+    '''Reply to a message with a reply'''
+    try:
+        await message.reply(replymessage)
+    except Forbidden:
+        pass
+
 async def timeout(message, reason):
     '''
     Time outs the author of the message for the reason given,
@@ -48,7 +55,7 @@ async def timeout(message, reason):
         await message.author.timeout_for(timedelta(weeks=1), reason=reason)
         return True
     except Forbidden:
-        await message.reply(permission_error_template.substitute(permission='Moderate Members'))
+        await reply(message, permission_error_template.substitute(permission='Moderate Members'))
         return False
 
 async def ban(message, reason):
@@ -60,7 +67,7 @@ async def ban(message, reason):
         await message.author.ban(delete_message_days=0, reason=reason)
         return True
     except Forbidden:
-        await message.reply(permission_error_template.substitute(permission='Ban Members'))
+        await reply(message, permission_error_template.substitute(permission='Ban Members'))
         return False
 
 async def delete(message):
@@ -68,7 +75,7 @@ async def delete(message):
     try:
         await message.delete()
     except Forbidden:
-        await message.reply(permission_error_template.substitute(permission='Manage Messages'))
+        await reply(message, permission_error_template.substitute(permission='Manage Messages'))
 
 async def punish(message):
     '''Punish the member which sent the message and return whether the punishment was succesfull'''
@@ -80,7 +87,7 @@ async def punish(message):
     has_ban_members = message.author.guild_permissions.ban_members
     if has_moderate_members or has_ban_members:
         response = 'Scam detected but you have the `Moderate Members` or `Ban Members` permission'
-        await message.reply(response)
+        await reply(message, response)
         return False
 
     mode = await db.getmode(message.guild.id)
