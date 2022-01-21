@@ -53,7 +53,7 @@ async def is_scam(message):
             return True
 
         domain = message_link.split('.')[0]
-        if domain.startswith('dis') and 'or' in domain:
+        if domain != 'discord' and domain.startswith('dis') and 'or' in domain:
             return True
 
         message = message.replace(message_link, '')
