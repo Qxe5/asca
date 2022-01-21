@@ -51,6 +51,11 @@ async def is_scam(message):
     for message_link in message_links:
         if message_link in links:
             return True
+
+        domain = message_link.split('.')[0]
+        if domain.startswith('dis') and 'or' in domain:
+            return True
+
         message = message.replace(message_link, '')
 
     if message_links and await contains_maliciousterm(message):
