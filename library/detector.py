@@ -3,7 +3,7 @@ from datetime import timedelta
 from string import Template
 from urllib.parse import urlparse
 
-from discord import Embed, Colour, DMChannel, User, Forbidden
+from discord import Embed, Colour, DMChannel, User, Forbidden, NotFound
 from urlextract import URLExtract
 
 from library import db
@@ -101,6 +101,8 @@ async def delete(message):
         await message.delete()
     except Forbidden:
         await reply(message, permission_error_template.substitute(permission='Manage Messages'))
+    except NotFound:
+        pass
 
 async def punish(message):
     '''Punish the member which sent the message and return whether the punishment was succesfull'''
