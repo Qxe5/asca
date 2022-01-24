@@ -28,7 +28,7 @@ async def official(link):
     ]
 
     for official_link in official_links:
-        if link == f'https://{official_link}':
+        if link == official_link:
             return True
     return False
 
