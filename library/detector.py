@@ -17,6 +17,21 @@ async def lognotlink(message):
     with open(notlinks_path, mode='a', encoding='utf-8') as notlinks_file:
         notlinks_file.write(f'{message}\n\n')
 
+async def official(link):
+    '''Determine and return whether the link is official'''
+    official_links = [
+        'discord.com',
+        'discord.gg',
+        'discord.gift',
+        'discordapp.com',
+        'cdn.discordapp.com'
+    ]
+
+    for official_link in official_links:
+        if link == f'https://{official_link}':
+            return True
+    return False
+
 async def removewhitespace(message):
     '''Remove whitespace from message'''
     return ''.join(message.split())
@@ -45,15 +60,18 @@ async def is_scam(message):
     link_extractor.update_when_older(1)
     message = message.replace('http', ' http').replace('://\n', '://').replace('о', 'o')
     urls = link_extractor.find_urls(message, with_schema_only=True, only_unique=True)
-    nitrolink = 'https://discord.gift'
-    message_links = [urlparse(url).netloc for url in urls if not url.startswith(nitrolink)]
+    message_links = [urlparse(url).netloc for url in urls]
+
+    for message_link in message_links[:]:
+        if await official(message_link):
+            message_links.remove(message_link)
 
     for message_link in message_links:
         if message_link in links:
             return True
 
         domain = message_link.split('.')[0]
-        if domain != 'discord' and domain.startswith('dis') and 'or' in domain:
+        if domain.startswith('dis') and 'or' in domain:
             await lognotlink(original_message)
             return True
 
