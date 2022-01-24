@@ -7,7 +7,7 @@ from discord.ext import tasks, commands
 from cogs.status import Status
 from library import db
 from library.detector import process
-from library.error import cantlog, notadmin
+from library.error import cantlog, notadmin, invalid_days
 from library.links import update
 
 def main():
@@ -63,6 +63,26 @@ def main():
         '''Handle a lack of the Administrator permission'''
         if isinstance(error, commands.MissingPermissions):
             await notadmin(ctx)
+        else:
+            print(type(error), error)
+
+    @bot.slash_command()
+    @commands.guild_only()
+    @commands.has_permissions(administrator=True)
+    async def timeoutdays(ctx, days : int):
+        '''Set the number of days timeouts are for'''
+        if days < 1 or days > 28:
+            raise discord.InvalidArgument('Invalid number of days')
+
+        await db.set_timeoutperiod(ctx.guild.id, days)
+        await ctx.respond(f'Timeout period set to {days} days', ephemeral=True)
+
+    @timeoutdays.error
+    async def timeoutdays_error(ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await notadmin(ctx)
+        elif isinstance(error, discord.ApplicationCommandInvokeError):
+            await invalid_days(ctx)
         else:
             print(type(error), error)
 

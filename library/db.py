@@ -3,6 +3,7 @@ from enum import Enum
 import sqlite3
 
 MODES = Enum('MODES', 'TIMEOUT BAN')
+DEFAULT_TIMEOUT_DAYS = 7
 
 async def connect():
     '''Connect to the database and return a (connection, cursor) pair'''
@@ -46,6 +47,29 @@ async def setbanmode(guild):
     connection, cursor = await connect()
 
     cursor.execute('insert into modes values(?)', [guild])
+
+    await disconnect(connection)
+
+async def get_timeoutperiod(guild):
+    '''Retrieve and return the timeout period for the guild'''
+    connection, cursor = await connect()
+
+    days = cursor.execute('select days from periods where guild = ?', [guild]).fetchone()
+
+    await disconnect(connection)
+
+    if not days:
+        return DEFAULT_TIMEOUT_DAYS
+    return days[0]
+
+async def set_timeoutperiod(guild, days):
+    '''Set the timeout period for the guild'''
+    if days == DEFAULT_TIMEOUT_DAYS:
+        return
+
+    connection, cursor = await connect()
+
+    cursor.execute('replace into periods values (?, ?)', [guild, days])
 
     await disconnect(connection)
 

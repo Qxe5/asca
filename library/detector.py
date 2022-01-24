@@ -94,8 +94,10 @@ async def timeout(message, reason):
     Time outs the author of the message for the reason given,
     and returns whether the timeout was successful
     '''
+    days = await db.get_timeoutperiod(message.guild.id)
+
     try:
-        await message.author.timeout_for(timedelta(weeks=1), reason=reason)
+        await message.author.timeout_for(timedelta(days=days), reason=reason)
         return True
     except Forbidden:
         await reply(message, permission_error_template.substitute(permission='Moderate Members'))
