@@ -1,6 +1,8 @@
 '''Entry point'''
 from getpass import getpass
 import logging
+from signal import signal, SIGINT
+import sys
 
 import discord
 from discord.ext import tasks, commands
@@ -10,6 +12,8 @@ from library import db
 from library.detector import process
 from library.error import cantlog, notadmin, invalid_days
 from library.links import update
+
+signal(SIGINT, lambda signalnumber, stackframe: sys.exit())
 
 logging.basicConfig()
 
