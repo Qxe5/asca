@@ -12,6 +12,8 @@ Asca moderates scammers and deletes scam messages
 <details>
 <summary>Setup Your Own Instance</summary>
 
+**Requires Python 3.10.x or later**
+
 0. Create a Discord bot with
     * Scopes: `bot`, `applications.commands`
     * Permissions: `Manage Messages`, `Moderate Members`, `Ban Members`
