@@ -18,9 +18,7 @@ Asca moderates scammers and deletes scam messages
     * Scopes: `bot`, `applications.commands`
     * Permissions: `Manage Messages`, `Moderate Members`, `Ban Members`
 
-1. Create a file `token` in the project root, which contains only your bot token from Discord.
-
-2. Execute
+1. Execute
 ```
 % python3 -m pip install --requirement requirements.txt
 % python3 bot.py
