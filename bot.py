@@ -1,6 +1,6 @@
 '''Entry point'''
+from getpass import getpass
 import logging
-from os.path import exists
 
 import discord
 from discord.ext import tasks, commands
@@ -133,12 +133,10 @@ async def stoplog_error(ctx, error):
 bot.add_cog(Status(bot))
 
 # authenticate
-TOKEN_FILENAME = 'token'
+token = getpass(prompt='Token: ')
 
-if not exists(TOKEN_FILENAME):
-    print('Please create the token file (see https://github.com/Qxe5/asca/blob/main/README.md)')
-    raise SystemExit(1)
-
-with open(TOKEN_FILENAME, encoding='utf-8') as token_file:
-    token = token_file.read()
-bot.run(token)
+try:
+    bot.run(token)
+except discord.LoginFailure as loginfailure:
+    print('Invalid Token')
+    raise SystemExit(1) from loginfailure
