@@ -1,0 +1,3 @@
+requests
+urlextract
+git+https://github.com/Pycord-Development/pycord
