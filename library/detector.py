@@ -24,7 +24,8 @@ async def official(link):
         'discord.gg',
         'discord.gift',
         'discordapp.com',
-        'cdn.discordapp.com'
+        'cdn.discordapp.com',
+        'discordstatus.com'
     ]
 
     for official_link in official_links:
