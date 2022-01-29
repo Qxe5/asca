@@ -1,1 +1,1 @@
-* All submitted code must be rated by `pylint` (default configuration and invocation) at `10/10` (well justified block disables allowed).
+* All submitted code must be rated by `pylint` ([configuration](.pylintrc)) at `10/10` (well justified block disables allowed).
