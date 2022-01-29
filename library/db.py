@@ -11,7 +11,7 @@ async def connect():
     connection = sqlite3.connect(database_path)
     cursor = connection.cursor()
 
-    createdb_script_path = 'database/create_database.sql'
+    createdb_script_path = 'create_database.sql'
     with open(createdb_script_path, encoding='utf-8') as createdb_script_file:
         cursor.executescript(createdb_script_file.read())
 
