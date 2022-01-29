@@ -1,5 +1,4 @@
 .DS_Store
-.pylintrc
 database/database
 database/notlinks
 __pycache__/
