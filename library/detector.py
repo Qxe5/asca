@@ -176,7 +176,7 @@ async def log(message):
             logembed.add_field(name='Mention', value=message.author.mention)
 
             icon_url = ('https://cdn.discordapp.com'
-                        '/attachments/933434052621512734/933435123255373875/banicon.png')
+                        '/attachments/936463189237977139/937011660487544902/icon.png')
             logembed.set_footer(icon_url=icon_url, text=message.author.id)
 
             try:
