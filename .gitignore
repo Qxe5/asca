@@ -1,6 +1,6 @@
 .DS_Store
 .pylintrc
-notlinks
 database/database
+database/notlinks
 __pycache__/
 .venv/
