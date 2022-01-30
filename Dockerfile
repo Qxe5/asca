@@ -1,8 +1,9 @@
 FROM archlinux
 
-RUN pacman -Syu --noconfirm
-RUN pacman -S python python-pip git --noconfirm
-RUN git clone https://github.com/Qxe5/asca.git
-RUN python -m pip install -r requirements.txt
+WORKDIR /asca/
 
-CMD ["python", "bot.py"]
+RUN pacman -Syu python python-pip git --noconfirm && \
+    git clone https://github.com/Qxe5/asca.git . && \
+    python -m pip install -r requirements.txt --no-cache-dir
+
+ENTRYPOINT python bot.py
