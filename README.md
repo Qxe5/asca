@@ -7,9 +7,14 @@ Asca moderates scammers and deletes scam messages
 
 *Optionally configure via slash commands*
 
-[Add to Server](https://discord.com/api/oauth2/authorize?client_id=930922882886934588&permissions=1099511635972&scope=bot%20applications.commands)
+### Modes of Operation
 
-Note that the `Ban Members` permission is optional, if you are happy with the default of Timeout mode.
+Both modes of operation require `Manage Messages` to delete scam messages
+
+- **Timeout Mode (Default):** Requires `Moderate Members` to **timeout** scammers
+- **Ban Mode:** Requires `Ban Members` to **ban** scammers
+
+[Add to Server](https://discord.com/api/oauth2/authorize?client_id=930922882886934588&permissions=1099511635972&scope=bot%20applications.commands)
 
 <details>
 <summary>Setup Your Own Instance</summary>
