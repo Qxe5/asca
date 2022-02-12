@@ -9,8 +9,8 @@ from urlextract import URLExtract
 from library import db
 from library.links import links
 
-permission_error_template = Template(('Scam detected, but I need the `$permission` permission'
-                                      'or to be placed higher on the `Roles` list'))
+permission_error_template = Template('Scam detected, but I need the `$permission` permission '
+                                     'or to be placed higher on the `Roles` list')
 
 async def lognotlink(message):
     '''Log a detected scam which is not in the scam links list'''
