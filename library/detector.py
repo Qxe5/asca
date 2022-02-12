@@ -195,7 +195,6 @@ async def process(message, botuser):
     if message.author == botuser or isinstance(message.channel, DMChannel):
         return
 
-    if await is_scam(message.content):
-        if await punish(message):
-            await log(message)
-            await delete(message)
+    if await is_scam(message.content) and await punish(message):
+        await log(message)
+        await delete(message)
