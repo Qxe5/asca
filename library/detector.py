@@ -79,7 +79,8 @@ async def is_scam(message):
             await lognotlink(original_message)
             return True
 
-        message = message.replace(message_link, '')
+    for url in urls:
+        message = message.replace(url, '')
 
     if message_links and await contains_maliciousterm(message):
         await lognotlink(original_message)
