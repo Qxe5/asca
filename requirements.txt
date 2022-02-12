@@ -1,3 +1,3 @@
 requests
 urlextract
-py-cord==2.0.0b3
+py-cord==2.0.0b4
