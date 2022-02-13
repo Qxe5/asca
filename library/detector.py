@@ -27,6 +27,7 @@ async def official(link):
         'discordapp.com',
         'cdn.discordapp.com',
         'discordstatus.com',
+        'discord.website',
         'discord.xyz'
     ]
 
