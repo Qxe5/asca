@@ -31,9 +31,8 @@ async def official(link):
         'discord.xyz'
     ]
 
-    for official_link in official_links:
-        if link == official_link:
-            return True
+    if link in official_links:
+        return True
     return False
 
 async def removewhitespace(message):
