@@ -47,7 +47,8 @@ async def contains_maliciousterm(message):
         'nitro',
         await removewhitespace('who is first?'),
         await removewhitespace('who will catch this gift?'),
-        await removewhitespace('i stopped playing cs:go')
+        await removewhitespace('i stopped playing cs:go'),
+        await removewhitespace('i made a game can you test play?')
     ]
 
     for term in terms:
