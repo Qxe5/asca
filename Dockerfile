@@ -1,9 +1,9 @@
-FROM archlinux
+FROM python:3-alpine
 
 WORKDIR /asca/
 
-RUN pacman -Syu python python-pip git --noconfirm && \
-    git clone https://github.com/Qxe5/asca.git . && \
-    python -m pip install -r requirements.txt --no-cache-dir
+RUN apk update && apk add git && \
+    git clone https://github.com/Qxe5/asca . && \
+    pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT python bot.py
+ENTRYPOINT [ "python", "./bot.py" ]
