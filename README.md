@@ -30,8 +30,13 @@ Both modes of operation require `Manage Messages` to delete scam messages
 % python3 -m pip install --requirement requirements.txt
 % python3 bot.py
 ```
-
-[Docker](https://hub.docker.com/r/dotbotio/asca)
+   
+Docker:
+```
+% docker volume create asca
+% docker run -d -v asca:/asca/database/ dotbotio/asca <bottoken>
+```
+[Docker image](https://hub.docker.com/r/dotbotio/asca)
 </details>
 
 <details>
