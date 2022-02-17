@@ -136,6 +136,7 @@ async def stoplog_error(ctx, error):
 # add cogs
 bot.add_cog(Status(bot))
 
+'''
 # authenticate
 token = getpass(prompt='Token: ')
 
@@ -144,3 +145,10 @@ try:
 except discord.LoginFailure as loginfailure:
     print('Invalid Token')
     raise SystemExit(1) from loginfailure
+'''
+
+if len(sys.argv) < 2:
+    print("Usage: ./bot.py <token>")
+
+bot.run(sys.argv[1])
+    
