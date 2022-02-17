@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+
+  asca:
+    image: dotbotio/asca
+    container_name: asca
+    restart: always
+    command: <bottoken> #replace <bottoken> with the token of the bot.
+    volumes:
+      - asca:/asca/database/
+
+volumes:
+    asca:
+        external: false
