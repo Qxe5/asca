@@ -95,7 +95,7 @@ async def is_scam(message):
             return True
 
         for embed in embeds:
-            if (await decyrillic(embed.provider.name)).lower() == 'discord':
+            if embed.provider.name and (await decyrillic(embed.provider.name)).lower() == 'discord':
                 return True
 
     return False
