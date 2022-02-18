@@ -35,6 +35,10 @@ async def official(link):
         return True
     return False
 
+async def decyrillic(text):
+    '''Transform Cyrillic into ASCII and return the transformation'''
+    return text.replace('с', 'c').replace('о', 'o')
+
 async def removewhitespace(message):
     '''Remove whitespace from message'''
     return ''.join(message.split())
@@ -59,18 +63,19 @@ async def contains_maliciousterm(message):
 
 async def is_scam(message):
     '''Determine and return whether the message is a scam'''
-    original_message = message
-    message = message.lower()
+    original_message = message.content
+    embeds = message.embeds
+
+    message = original_message.lower().replace('http', ' http').replace('://\n', '://')
+    message = await decyrillic(message)
 
     link_extractor = URLExtract()
     link_extractor.update_when_older(1)
-    message = message.replace('http', ' http').replace('://\n', '://').replace('о', 'o')
     urls = link_extractor.find_urls(message, with_schema_only=True, only_unique=True)
     message_links = [urlparse(url).netloc for url in urls]
-
-    for message_link in message_links[:]:
-        if await official(message_link):
-            message_links.remove(message_link)
+    message_links = [
+        message_link for message_link in message_links if not await official(message_link)
+    ]
 
     for message_link in message_links:
         if message_link in links:
@@ -84,9 +89,15 @@ async def is_scam(message):
     for url in urls:
         message = message.replace(url, '')
 
-    if message_links and await contains_maliciousterm(message):
-        await lognotlink(original_message)
-        return True
+    if message_links:
+        if await contains_maliciousterm(message):
+            await lognotlink(original_message)
+            return True
+
+        for embed in embeds:
+            if (await decyrillic(embed.provider.name)).lower() == 'discord':
+                return True
+
     return False
 
 async def reply(message, replymessage):
@@ -197,6 +208,6 @@ async def process(message, botuser):
     if message.author == botuser or isinstance(message.channel, DMChannel):
         return
 
-    if await is_scam(message.content) and await punish(message):
+    if await is_scam(message) and await punish(message):
         await log(message)
         await delete(message)
