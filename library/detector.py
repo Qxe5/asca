@@ -47,6 +47,7 @@ async def contains_maliciousterm(message):
         'nitro',
         await removewhitespace('who is first?'),
         await removewhitespace('who will catch this gift?'),
+        await removewhitespace('take it guys'),
         await removewhitespace('i stopped playing cs:go'),
         await removewhitespace('i made a game can you test play?')
     ]
@@ -76,7 +77,7 @@ async def is_scam(message):
             return True
 
         domain = message_link.split('.')[0]
-        if domain.startswith('dis') and 'or' in domain:
+        if domain.startswith('dis') and any(substring in domain for substring in ['or', 'rd']):
             await lognotlink(original_message)
             return True
 
