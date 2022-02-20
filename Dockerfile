@@ -1,8 +1,8 @@
-FROM archlinux
+FROM python:3-alpine
 
 WORKDIR /asca/
 
-RUN pacman -Syu python python-pip git --noconfirm && \
+RUN apk add git --no-cache && \
     git clone https://github.com/Qxe5/asca.git . && \
     python -m pip install -r requirements.txt --no-cache-dir
 
