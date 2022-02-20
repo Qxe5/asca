@@ -3,7 +3,7 @@ from datetime import timedelta
 from string import Template
 from urllib.parse import urlparse
 
-from discord import Embed, Colour, DMChannel, User, Forbidden, NotFound
+from discord import Embed, Colour, DMChannel, User, Forbidden, NotFound, HTTPException
 from urlextract import URLExtract
 
 from library import db
@@ -104,7 +104,7 @@ async def reply(message, replymessage):
     '''Reply to a message with a reply'''
     try:
         await message.reply(replymessage)
-    except Forbidden:
+    except (Forbidden, HTTPException):
         pass
 
 async def timeout(message, reason):
