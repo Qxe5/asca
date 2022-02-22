@@ -37,7 +37,18 @@ async def official(link):
 
 async def decyrillic(text):
     '''Transform Cyrillic into ASCII and return the transformation'''
-    return text.replace('с', 'c').replace('о', 'o')
+    replacements = (
+        ('а', 'a'),
+        ('с', 'c'),
+        ('е', 'e'),
+        ('о', 'o'),
+        ('у', 'y')
+    )
+
+    for replacement in replacements:
+        text = text.replace(*replacement)
+
+    return text
 
 async def removewhitespace(message):
     '''Remove whitespace from message'''
