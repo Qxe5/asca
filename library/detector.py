@@ -64,6 +64,7 @@ async def contains_maliciousterm(message):
         await removewhitespace('who will catch this gift?'),
         await removewhitespace('take it guys'),
         await removewhitespace('i stopped playing cs:go'),
+        await removewhitespace('can you check out the game i created today'),
         await removewhitespace('i made a game can you test play?')
     ]
 
