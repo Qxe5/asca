@@ -28,7 +28,8 @@ async def official(link):
         'cdn.discordapp.com',
         'discordstatus.com',
         'discord.website',
-        'discord.xyz'
+        'discord.xyz',
+        'discord.thesidedeck.com'
     ]
 
     if link in official_links:
