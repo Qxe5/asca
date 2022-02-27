@@ -18,7 +18,8 @@ signal(SIGINT, lambda signalnumber, stackframe: sys.exit())
 logging.basicConfig()
 
 # init
-bot = discord.Bot()
+intents = discord.Intents(guilds=True, guild_messages=True)
+bot = discord.Bot(intents=intents)
 
 @bot.listen()
 async def on_ready():
