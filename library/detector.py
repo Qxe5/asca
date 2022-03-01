@@ -26,10 +26,7 @@ async def official(link):
         'discord.gift',
         'discordapp.com',
         'cdn.discordapp.com',
-        'discordstatus.com',
-        'discord.website',
-        'discord.xyz',
-        'discord.thesidedeck.com'
+        'discordstatus.com'
     ]
 
     if link in official_links:
@@ -93,11 +90,6 @@ async def is_scam(message):
 
     for message_link in message_links:
         if message_link in links:
-            return True
-
-        domain = message_link.split('.')[0]
-        if domain.startswith('dis') and any(substring in domain for substring in ['or', 'rd']):
-            await lognotlink(original_message)
             return True
 
     for url in urls:
