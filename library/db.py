@@ -2,13 +2,14 @@
 from enum import Enum
 import sqlite3
 
+from library.paths import DATABASE
+
 MODES = Enum('MODES', 'TIMEOUT BAN')
 DEFAULT_TIMEOUT_DAYS = 7
 
 async def connect():
     '''Connect to the database and return a (connection, cursor) pair'''
-    database_path = 'database/database'
-    connection = sqlite3.connect(database_path)
+    connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
     createdb_script_path = 'create_database.sql'

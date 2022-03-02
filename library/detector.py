@@ -8,14 +8,14 @@ from urlextract import URLExtract
 
 from library import db
 from library.links import links
+from library.paths import NOTLINKS
 
 permission_error_template = Template('Scam detected, but I need the `$permission` permission '
                                      'or to be placed higher on the `Roles` list')
 
 async def lognotlink(message):
     '''Log a detected scam which is not in the scam links list'''
-    notlinks_path = 'database/notlinks'
-    with open(notlinks_path, mode='a', encoding='utf-8') as notlinks_file:
+    with open(NOTLINKS, mode='a', encoding='utf-8') as notlinks_file:
         notlinks_file.write(f'{message}\n\n')
 
 async def official(link):
