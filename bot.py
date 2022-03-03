@@ -10,8 +10,9 @@ from discord.ext import tasks, commands
 from cogs.status import Status
 from library import db
 from library.detector import process
-from library.error import cantlog, notadmin, invalid_days
+from library.error import cantlog, notadmin, notowner, invalid_days
 from library.links import update
+from library.paths import DATABASE, NOTLINKS
 
 signal(SIGINT, lambda signalnumber, stackframe: sys.exit())
 
@@ -131,6 +132,27 @@ async def stoplog_error(ctx, error):
     '''Handle a lack of the Administrator permission'''
     if isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
+    else:
+        print(type(error), error)
+
+@bot.slash_command()
+@commands.is_owner()
+async def backup(ctx):
+    '''Backup the database'''
+    with open(DATABASE, mode='rb') as database_file, \
+         open(NOTLINKS, mode='rb') as notlinks_file:
+        files = [
+            discord.File(database_file, filename='database'),
+            discord.File(notlinks_file, filename='notlinks')
+        ]
+
+        await ctx.respond(files=files)
+
+@backup.error
+async def backup_error(ctx, error):
+    '''Handle not being the Bot Owner'''
+    if isinstance(error, commands.NotOwner):
+        await notowner(ctx)
     else:
         print(type(error), error)
 
