@@ -27,13 +27,25 @@ async def on_ready():
     '''Print info when ready'''
     print('Logged in as', bot.user, f'({len(bot.guilds)} guilds)')
 
-# update scam links
+# tasks
 @tasks.loop(minutes=30)
 async def update_scamlinks():
     '''Update the scam links periodically'''
     await update()
 
 update_scamlinks.start()
+
+@tasks.loop(hours=24)
+async def backup_database(ctx):
+    '''Backup the database periodically'''
+    with open(DATABASE, mode='rb') as database_file, \
+         open(NOTLINKS, mode='rb') as notlinks_file:
+        files = [
+            discord.File(database_file, filename='database'),
+            discord.File(notlinks_file, filename='notlinks')
+        ]
+
+        await ctx.respond(files=files)
 
 # process messages
 @bot.listen()
@@ -138,15 +150,8 @@ async def stoplog_error(ctx, error):
 @bot.slash_command()
 @commands.is_owner()
 async def backup(ctx):
-    '''Backup the database'''
-    with open(DATABASE, mode='rb') as database_file, \
-         open(NOTLINKS, mode='rb') as notlinks_file:
-        files = [
-            discord.File(database_file, filename='database'),
-            discord.File(notlinks_file, filename='notlinks')
-        ]
-
-        await ctx.respond(files=files)
+    '''Backup the database periodically'''
+    backup_database.start(ctx)
 
 @backup.error
 async def backup_error(ctx, error):
