@@ -35,7 +35,7 @@ async def update_scamlinks():
 
 update_scamlinks.start()
 
-@tasks.loop(hours=24)
+@tasks.loop(hours=1)
 async def backup_database(ctx):
     '''Backup the database periodically'''
     with open(DATABASE, mode='rb') as database_file, \
