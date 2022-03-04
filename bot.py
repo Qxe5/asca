@@ -116,7 +116,7 @@ async def log(ctx):
 
 @log.error
 async def log_error(ctx, error):
-    '''Handle a lack of the Administrator permission'''
+    '''Handle a lack of permissions'''
     if isinstance(error, commands.BotMissingPermissions):
         await cantlog(ctx)
     elif isinstance(error, commands.MissingPermissions):
