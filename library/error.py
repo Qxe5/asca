@@ -1,7 +1,10 @@
 '''Command error handling'''
-async def cantlog(ctx):
-    '''Handle a lack of the Send Messages permission'''
-    errormessage = 'Failed, I need the `Send Messages` permission in this channel'
+async def cantlog(ctx, attach=False):
+    '''Handle a lack of the Send Messages or Attach Files permission'''
+    attach_substring = ' / `Attach Files`' if attach else ''
+    errormessage = (f'Failed, I need the `Send Messages`{attach_substring} '
+                    'permission in this channel')
+
     await ctx.respond(errormessage, ephemeral=True)
 
 async def notadmin(ctx):

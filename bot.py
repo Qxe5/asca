@@ -9,10 +9,10 @@ from discord.ext import tasks, commands
 
 from cogs.status import Status
 from library import db
+from library.backup import backup_db
 from library.detector import process
 from library.error import cantlog, notadmin, notowner, invalid_days
 from library.links import update
-from library.paths import DATABASE, NOTLINKS
 
 signal(SIGINT, lambda signalnumber, stackframe: sys.exit())
 
@@ -36,16 +36,9 @@ async def update_scamlinks():
 update_scamlinks.start()
 
 @tasks.loop(hours=1)
-async def backup_database(ctx):
-    '''Backup the database periodically'''
-    with open(DATABASE, mode='rb') as database_file, \
-         open(NOTLINKS, mode='rb') as notlinks_file:
-        files = [
-            discord.File(database_file, filename='database'),
-            discord.File(notlinks_file, filename='notlinks')
-        ]
-
-        await ctx.respond(files=files)
+async def backup_database(channel):
+    '''Backup the database periodically to the channel'''
+    await backup_db(channel)
 
 # process messages
 @bot.listen()
@@ -148,15 +141,22 @@ async def stoplog_error(ctx, error):
         print(type(error), error)
 
 @bot.slash_command()
+@commands.bot_has_permissions(send_messages=True, attach_files=True)
 @commands.is_owner()
 async def backup(ctx):
     '''Backup the database periodically'''
-    backup_database.start(ctx)
+    if not backup_database.is_running():
+        backup_database.start(ctx.channel)
+        await ctx.respond('Database backups will be sent to this channel', ephemeral=True)
+    else:
+        await ctx.respond('Database backups have already been initialised!', ephemeral=True)
 
 @backup.error
 async def backup_error(ctx, error):
-    '''Handle not being the Bot Owner'''
-    if isinstance(error, commands.NotOwner):
+    '''Handle a lack of permissions'''
+    if isinstance(error, commands.BotMissingPermissions):
+        await cantlog(ctx, attach=True)
+    elif isinstance(error, commands.NotOwner):
         await notowner(ctx)
     else:
         print(type(error), error)
