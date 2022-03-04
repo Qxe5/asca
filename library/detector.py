@@ -1,9 +1,11 @@
 '''Scam detection and punishment'''
 from datetime import timedelta
+from difflib import SequenceMatcher
 from string import Template
 from urllib.parse import urlparse
 
 from discord import Embed, Colour, DMChannel, User, Forbidden, NotFound, HTTPException
+from tldextract import extract
 from urlextract import URLExtract
 
 from library import db
@@ -89,7 +91,11 @@ async def is_scam(message):
     ]
 
     for message_link in message_links:
-        if message_link in links:
+        domain = extract(message_link).domain
+        ratio = SequenceMatcher(a='discord', b=domain).ratio()
+        threshold = 0.85
+
+        if message_link in links or ratio > threshold:
             return True
 
     for url in urls:
