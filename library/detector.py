@@ -95,7 +95,7 @@ async def is_scam(message):
         ratio = SequenceMatcher(a='discord', b=domain).ratio()
         threshold = 0.85
 
-        if message_link in links or ratio > threshold:
+        if message_link in links or threshold < ratio < 1:
             return True
 
     for url in urls:
