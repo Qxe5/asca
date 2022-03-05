@@ -76,7 +76,7 @@ async def switchmode_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
     else:
-        print(type(error), error)
+        raise error
 
 @bot.slash_command()
 @commands.guild_only()
@@ -97,7 +97,7 @@ async def timeoutdays_error(ctx, error):
     elif isinstance(error, discord.ApplicationCommandInvokeError):
         await invalid_days(ctx)
     else:
-        print(type(error), error)
+        raise error
 
 @bot.slash_command()
 @commands.guild_only()
@@ -124,7 +124,7 @@ async def log_error(ctx, error):
     elif isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
     else:
-        print(type(error), error)
+        raise error
 
 @bot.slash_command()
 @commands.guild_only()
@@ -140,7 +140,7 @@ async def stoplog_error(ctx, error):
     if isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
     else:
-        print(type(error), error)
+        raise error
 
 @bot.slash_command(default_permission=False)
 @commands.bot_has_permissions(send_messages=True, attach_files=True)
@@ -162,7 +162,7 @@ async def backup_error(ctx, error):
     elif isinstance(error, commands.NotOwner):
         await notowner(ctx)
     else:
-        print(type(error), error)
+        raise error
 
 @bot.message_command(name='Report as scam')
 async def report(ctx, message):
