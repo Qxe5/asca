@@ -142,7 +142,7 @@ async def stoplog_error(ctx, error):
     else:
         print(type(error), error)
 
-@bot.slash_command()
+@bot.slash_command(default_permission=False)
 @commands.bot_has_permissions(send_messages=True, attach_files=True)
 @commands.is_owner()
 @permissions.is_owner()
