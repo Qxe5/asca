@@ -13,6 +13,7 @@ from library.backup import backup_db
 from library.detector import process
 from library.error import cantlog, notadmin, notowner, invalid_days
 from library.links import update
+from library.report import reportmessage
 
 signal(SIGINT, lambda signalnumber, stackframe: sys.exit())
 
@@ -160,6 +161,12 @@ async def backup_error(ctx, error):
         await notowner(ctx)
     else:
         print(type(error), error)
+
+@bot.message_command(name='Report')
+async def report(ctx, message):
+    '''Report the message as a scam'''
+    await reportmessage(message.content, ctx.author.id)
+    await ctx.respond('Thank you, your report will be processed shortly', ephemeral=True)
 
 # add cogs
 bot.add_cog(Status(bot))
