@@ -5,13 +5,14 @@ from signal import signal, SIGINT
 import sys
 
 import discord
+from discord.commands.permissions import is_owner
 from discord.ext import tasks, commands
 
 from cogs.status import Status
 from library import db
 from library.backup import backup_db
 from library.detector import process
-from library.error import cantlog, notadmin, notowner, invalid_days
+from library.error import cantlog, notadmin, invalid_days
 from library.links import update
 from library.report import reportmessage
 
@@ -143,7 +144,7 @@ async def stoplog_error(ctx, error):
 
 @bot.slash_command()
 @commands.bot_has_permissions(send_messages=True, attach_files=True)
-@commands.is_owner()
+@is_owner()
 async def backup(ctx):
     '''Backup the database periodically'''
     if not backup_database.is_running():
@@ -157,8 +158,6 @@ async def backup_error(ctx, error):
     '''Handle a lack of permissions'''
     if isinstance(error, commands.BotMissingPermissions):
         await cantlog(ctx, attach=True)
-    elif isinstance(error, commands.NotOwner):
-        await notowner(ctx)
     else:
         print(type(error), error)
 
