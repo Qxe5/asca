@@ -12,6 +12,11 @@ async def notadmin(ctx):
     errormessage = 'Only a member with the `Administrator` permission can run this command'
     await ctx.respond(errormessage, ephemeral=True)
 
+async def notowner(ctx):
+    '''Handle not being the Bot Owner'''
+    errormessage = 'Only the `Bot Owner` can run this command'
+    await ctx.respond(errormessage, ephemeral=True)
+
 async def invalid_days(ctx):
     '''Handle an invalid timeout period'''
     errormessage = '`days` must be 1 - 28'
