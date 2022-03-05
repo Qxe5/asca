@@ -18,7 +18,8 @@ permission_error_template = Template('Scam detected, but I need the `$permission
 async def lognotlink(message):
     '''Log a detected scam which is not in the scam links list'''
     with open(NOTLINKS, mode='a', encoding='utf-8') as notlinks_file:
-        notlinks_file.write(f'{message}\n――――――――\n')
+        delimiter = '―' * 64
+        notlinks_file.write(f'{message}\n{delimiter}\n')
 
 async def official(link):
     '''Determine and return whether the link is official'''
