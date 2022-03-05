@@ -164,7 +164,7 @@ async def backup_error(ctx, error):
     else:
         print(type(error), error)
 
-@bot.message_command(name='Report')
+@bot.message_command(name='Report as scam')
 async def report(ctx, message):
     '''Report the message as a scam'''
     await reportmessage(message.content, ctx.author.id)
