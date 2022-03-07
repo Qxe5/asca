@@ -117,7 +117,7 @@ async def is_scam(message):
 async def reply(message, replymessage):
     '''Reply to a message with a reply'''
     try:
-        await message.reply(replymessage)
+        await message.reply(replymessage, mention_author=False)
     except (Forbidden, HTTPException):
         pass
 
