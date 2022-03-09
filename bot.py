@@ -13,7 +13,7 @@ from library.backup import backup_db
 from library.detector import process
 from library.error import cantlog, notadmin, notowner, invalid_days
 from library.links import update
-from library.report import reportmessage
+from library.reports import reportmessage, getreport
 
 signal(SIGINT, lambda signalnumber, stackframe: sys.exit())
 
@@ -162,10 +162,24 @@ async def backup_error(ctx, error):
     else:
         raise error
 
+@bot.slash_command()
+@commands.is_owner()
+async def reports(ctx):
+    '''Get the next report'''
+    await ctx.respond(await getreport(), ephemeral=True)
+
+@reports.error
+async def reports_error(ctx, error):
+    '''Handle not being the Bot Owner'''
+    if isinstance(error, commands.NotOwner):
+        await notowner(ctx)
+    else:
+        raise error
+
 @bot.message_command(name='Report as scam')
 async def report(ctx, message):
     '''Report the message as a scam'''
-    await reportmessage(message.content, ctx.author.id)
+    await reportmessage(message.content)
     await ctx.respond('Thank you, your report will be processed shortly', ephemeral=True)
 
 # add cogs
