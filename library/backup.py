@@ -10,6 +10,7 @@ async def backup_db(channel, guilds):
     and then backup the database to the channel
     '''
     await prune(guilds)
+    await channel.purge()
 
     with open(DATABASE, mode='rb') as database_file:
         file = File(database_file, filename='database')

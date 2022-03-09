@@ -142,7 +142,7 @@ async def stoplog_error(ctx, error):
         raise error
 
 @bot.slash_command()
-@commands.bot_has_permissions(send_messages=True, attach_files=True)
+@commands.bot_has_permissions(read_message_history=True, send_messages=True, attach_files=True)
 @commands.is_owner()
 async def backup(ctx):
     '''Backup the database periodically'''
@@ -156,7 +156,7 @@ async def backup(ctx):
 async def backup_error(ctx, error):
     '''Handle a lack of permissions'''
     if isinstance(error, commands.BotMissingPermissions):
-        await cantlog(ctx, attach=True)
+        await cantlog(ctx, attach=True, history=True)
     elif isinstance(error, commands.NotOwner):
         await notowner(ctx)
     else:

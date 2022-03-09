@@ -1,8 +1,9 @@
 '''Command error handling'''
-async def cantlog(ctx, attach=False):
-    '''Handle a lack of the Send Messages or Attach Files permission'''
+async def cantlog(ctx, attach=False, history=False):
+    '''Handle a lack of the Send Messages or Attach Files or Read Message History permission'''
     attach_substring = ' / `Attach Files`' if attach else ''
-    errormessage = (f'Failed, I need the `Send Messages`{attach_substring} '
+    history_substring = ' / `Read Message History`' if history else ''
+    errormessage = (f'Failed, I need the `Send Messages`{attach_substring}{history_substring} '
                     'permission in this channel')
 
     await ctx.respond(errormessage, ephemeral=True)
