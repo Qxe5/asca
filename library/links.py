@@ -2,14 +2,7 @@
 import requests
 
 links = []
-pendinglinks = [
-    'discorcl-give.com',
-    'discrod.com',
-    'nitro-free.com',
-    'e-giftvip.com',
-    'gitvhub.com',
-    'gitxhub.com'
-]
+pendinglinks = []
 
 async def update():
     '''Updates scam links'''
