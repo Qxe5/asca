@@ -129,3 +129,15 @@ async def delete_logging_channel(guild):
     cursor.execute('delete from logs where guild = ?', [guild])
 
     await disconnect(connection)
+
+async def prune(guilds):
+    '''Prune the database for guilds the bot is not in'''
+    connection, cursor = await connect()
+
+    tables = ['modes', 'periods', 'punishments', 'logs']
+    placeholders = ', '.join('?' * len(guilds))
+
+    for table in tables:
+        cursor.execute(f'delete from {table} where guild not in ({placeholders})', guilds)
+
+    await disconnect(connection)
