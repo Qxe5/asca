@@ -1,6 +1,5 @@
 .DS_Store
 database/database
-database/notlinks
 .vscode/
 __pycache__/
 .venv/
