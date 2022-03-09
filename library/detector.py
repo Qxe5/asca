@@ -198,7 +198,7 @@ async def log(message):
                 case db.MODES.BAN:
                     action = 'Banned'
 
-            description = f'**Message**```{scam_message}```'
+            description = f'**Message**```\n{scam_message}```'
             logembed = Embed(colour=Colour.red(), description=description)
 
             title = f'{action} {message.author}'
