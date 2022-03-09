@@ -10,16 +10,10 @@ from urlextract import URLExtract
 
 from library import db
 from library.links import links
-from library.paths import NOTLINKS
+from library.reports import reportmessage
 
 permission_error_template = Template('Scam detected, but I need the `$permission` permission '
                                      'or to be placed higher on the `Roles` list')
-
-async def lognotlink(message):
-    '''Log a detected scam which is not in the scam links list'''
-    with open(NOTLINKS, mode='a', encoding='utf-8') as notlinks_file:
-        delimiter = '―' * 64
-        notlinks_file.write(f'{message}\n{delimiter}\n')
 
 async def official(link):
     '''Determine and return whether the link is official'''
@@ -91,13 +85,18 @@ async def is_scam(message):
     message_links = [
         message_link for message_link in message_links if not await official(message_link)
     ]
+    message_links_string = '\n'.join(message_links)
 
     for message_link in message_links:
         domain = extract(message_link).domain
         ratio = SequenceMatcher(a='discord', b=domain).ratio()
         threshold = 0.85
 
-        if message_link in links or threshold < ratio < 1:
+        if message_link in links:
+            return True
+
+        if threshold < ratio < 1:
+            await reportmessage(message_links_string)
             return True
 
     for url in urls:
@@ -105,11 +104,12 @@ async def is_scam(message):
 
     if message_links:
         if await contains_maliciousterm(message):
-            await lognotlink(original_message)
+            await reportmessage(original_message)
             return True
 
         for embed in embeds:
             if embed.provider.name and (await decyrillic(embed.provider.name)).lower() == 'discord':
+                await reportmessage(message_links_string)
                 return True
 
     return False
