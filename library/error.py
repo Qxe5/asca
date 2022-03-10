@@ -1,4 +1,9 @@
 '''Command error handling'''
+async def nodm(ctx):
+    '''Handle a disallowed DM command invocation'''
+    errormessage = 'Please use this command in a Server and not via DM'
+    await ctx.respond(errormessage, ephemeral=True)
+
 async def cantlog(ctx, attach=False, history=False):
     '''Handle a lack of the Send Messages or Attach Files or Read Message History permission'''
     attach_substring = ' / `Attach Files`' if attach else ''

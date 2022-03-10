@@ -11,7 +11,7 @@ from cogs.status import Status
 from library import db
 from library.backup import backup_db
 from library.detector import process
-from library.error import cantlog, notadmin, notowner, invalid_days
+from library.error import nodm, cantlog, notadmin, notowner, invalid_days
 from library.links import update
 from library.reports import reportmessage, getreport
 
@@ -71,8 +71,10 @@ async def switchmode(ctx):
 
 @switchmode.error
 async def switchmode_error(ctx, error):
-    '''Handle a lack of the Administrator permission'''
-    if isinstance(error, commands.MissingPermissions):
+    '''Handle errors for associated command'''
+    if isinstance(error, commands.NoPrivateMessage):
+        await nodm(ctx)
+    elif isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
     else:
         raise error
@@ -91,7 +93,9 @@ async def timeoutdays(ctx, days : int):
 @timeoutdays.error
 async def timeoutdays_error(ctx, error):
     '''Handle errors for associated command'''
-    if isinstance(error, commands.MissingPermissions):
+    if isinstance(error, commands.NoPrivateMessage):
+        await nodm(ctx)
+    elif isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
     elif isinstance(error, discord.ApplicationCommandInvokeError):
         await invalid_days(ctx)
@@ -105,6 +109,14 @@ async def punishments(ctx):
     count = await db.get_punishment_count(ctx.guild.id)
     await ctx.respond(f'{count} Timeouts / Bans for this server', ephemeral=True)
 
+@punishments.error
+async def punishments_error(ctx, error):
+    '''Handle a disallowed DM invocation'''
+    if isinstance(error, commands.NoPrivateMessage):
+        await nodm(ctx)
+    else:
+        raise error
+
 @bot.slash_command()
 @commands.guild_only()
 @commands.bot_has_permissions(send_messages=True)
@@ -117,8 +129,10 @@ async def log(ctx):
 
 @log.error
 async def log_error(ctx, error):
-    '''Handle a lack of permissions'''
-    if isinstance(error, commands.BotMissingPermissions):
+    '''Handle errors for associated command'''
+    if isinstance(error, commands.NoPrivateMessage):
+        await nodm(ctx)
+    elif isinstance(error, commands.BotMissingPermissions):
         await cantlog(ctx)
     elif isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
@@ -135,8 +149,10 @@ async def stoplog(ctx):
 
 @stoplog.error
 async def stoplog_error(ctx, error):
-    '''Handle a lack of the Administrator permission'''
-    if isinstance(error, commands.MissingPermissions):
+    '''Handle errors for associated command'''
+    if isinstance(error, commands.NoPrivateMessage):
+        await nodm(ctx)
+    elif isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
     else:
         raise error
