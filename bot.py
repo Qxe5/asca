@@ -158,6 +158,7 @@ async def stoplog_error(ctx, error):
         raise error
 
 @bot.slash_command()
+@commands.guild_only()
 @commands.bot_has_permissions(read_message_history=True, send_messages=True, attach_files=True)
 @commands.is_owner()
 async def backup(ctx):
@@ -170,8 +171,10 @@ async def backup(ctx):
 
 @backup.error
 async def backup_error(ctx, error):
-    '''Handle a lack of permissions'''
-    if isinstance(error, commands.BotMissingPermissions):
+    '''Handle errors for associated command'''
+    if isinstance(error, commands.NoPrivateMessage):
+        await nodm(ctx)
+    elif isinstance(error, commands.BotMissingPermissions):
         await cantlog(ctx, attach=True, history=True)
     elif isinstance(error, commands.NotOwner):
         await notowner(ctx)
