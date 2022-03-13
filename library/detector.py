@@ -85,7 +85,7 @@ async def is_scam(message):
     message_links = [
         message_link for message_link in message_links if not await official(message_link)
     ]
-    message_links_string = '\n'.join(message_links)
+    report = '\n'.join(message_links)
 
     for message_link in message_links:
         domain = extract(message_link).domain
@@ -96,7 +96,7 @@ async def is_scam(message):
             return True
 
         if threshold < ratio < 1:
-            await reportmessage(message_links_string)
+            await reportmessage(report)
             return True
 
     for url in urls:
@@ -104,12 +104,12 @@ async def is_scam(message):
 
     if message_links:
         if await contains_maliciousterm(message):
-            await reportmessage(original_message)
+            await reportmessage(report)
             return True
 
         for embed in embeds:
             if embed.provider.name and (await decyrillic(embed.provider.name)).lower() == 'discord':
-                await reportmessage(message_links_string)
+                await reportmessage(report)
                 return True
 
     return False
