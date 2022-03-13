@@ -195,6 +195,7 @@ async def reports_error(ctx, error):
     else:
         raise error
 
+@bot.slash_command()
 async def servers(ctx):
     '''Get the server count of the bot'''
     await ctx.respond(f'{len(bot.guilds)} Servers', ephemeral=True)
