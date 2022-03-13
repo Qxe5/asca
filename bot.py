@@ -26,7 +26,7 @@ bot = discord.Bot(intents=intents)
 @bot.listen()
 async def on_ready():
     '''Print info when ready'''
-    print('Logged in as', bot.user, f'({len(bot.guilds)} guilds)')
+    print('Logged in as', bot.user)
 
 # tasks
 @tasks.loop(minutes=30)
@@ -194,6 +194,10 @@ async def reports_error(ctx, error):
         await notowner(ctx)
     else:
         raise error
+
+async def servers(ctx):
+    '''Get the server count of the bot'''
+    await ctx.respond(f'{len(bot.guilds)} Servers', ephemeral=True)
 
 @bot.message_command(name='Report as scam')
 async def report(ctx, message):
