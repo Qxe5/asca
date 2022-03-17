@@ -31,6 +31,10 @@ async def official(link):
         return True
     return False
 
+async def decodeblock(message):
+    '''Remove code blocks from message'''
+    return message.replace('`', '')
+
 async def decyrillic(text):
     '''Transform Cyrillic into ASCII and return the transformation'''
     replacements = (
@@ -76,6 +80,7 @@ async def is_scam(message):
     embeds = message.embeds
 
     message = original_message.lower().replace('http', ' http').replace('://\n', '://')
+    message = await decodeblock(message)
     message = await decyrillic(message)
 
     link_extractor = URLExtract()
@@ -188,7 +193,7 @@ async def log(message):
         logging_channel = message.guild.get_channel(logging_channel)
 
         if logging_channel: # logging channel still exists
-            scam_message = message.content.replace('`', '').replace('```', '')
+            scam_message = await decodeblock(message.content)
 
             mode = await db.getmode(message.guild.id)
 
