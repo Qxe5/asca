@@ -234,10 +234,8 @@ async def report(ctx, message):
 bot.add_cog(Status(bot))
 
 # authenticate
-token = getpass(prompt='Token: ')
-
 try:
-    bot.run(token)
+    bot.run(getpass(prompt='Token: '))
 except discord.LoginFailure as loginfailure:
     print('Invalid Token')
     raise SystemExit(1) from loginfailure
