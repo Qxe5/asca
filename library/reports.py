@@ -3,7 +3,7 @@ log = []
 
 async def reportmessage(message):
     '''Log an alleged scam message'''
-    if message:
+    if message and message not in log:
         log.append(message)
 
 async def getreport():
