@@ -1,7 +1,7 @@
 '''Entry point'''
 from getpass import getpass
 import logging
-from os import environ
+from os import environ as env
 from signal import signal, SIGINT
 import sys
 
@@ -23,12 +23,12 @@ logging.basicConfig()
 
 DEVSERVER_ENVVAR = 'ASCA_DEVSERVER'
 
-if DEVSERVER_ENVVAR not in environ:
+if DEVSERVER_ENVVAR not in env:
     print(f'Set {DEVSERVER_ENVVAR}=𝗜𝗗 in env')
     raise SystemExit(1)
 
 try:
-    devserver = int(environ[DEVSERVER_ENVVAR])
+    devserver = int(env[DEVSERVER_ENVVAR])
 except ValueError as invalid_devserver:
     print(f'{DEVSERVER_ENVVAR} must be an int')
     raise SystemExit(1) from invalid_devserver
