@@ -25,7 +25,9 @@ Both modes of operation require `Manage Messages` to delete scam messages
     * Scopes: `bot`, `applications.commands`
     * Permissions: `Manage Messages`, `Moderate Members`, `Ban Members`
 
-1. Execute
+1. Set `ASCA_DEVSERVER=𝗜𝗗` in env
+
+2. Execute
 ```
 % python3 -m pip install --requirement requirements.txt
 % python3 bot.py

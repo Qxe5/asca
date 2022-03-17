@@ -1,6 +1,7 @@
 '''Entry point'''
 from getpass import getpass
 import logging
+from os import environ
 from signal import signal, SIGINT
 import sys
 
@@ -19,9 +20,32 @@ signal(SIGINT, lambda signalnumber, stackframe: sys.exit())
 
 logging.basicConfig()
 
+DEVSERVER_ENVVAR = 'ASCA_DEVSERVER'
+
+if DEVSERVER_ENVVAR not in environ:
+    print(f'Set {DEVSERVER_ENVVAR}=𝗜𝗗 in env')
+    raise SystemExit(1)
+
+try:
+    devserver = int(environ[DEVSERVER_ENVVAR])
+except ValueError as invalid_devserver:
+    print(f'{DEVSERVER_ENVVAR} must be an int')
+    raise SystemExit(1) from invalid_devserver
+
 # init
 intents = discord.Intents(guilds=True, guild_messages=True, message_content=True)
-bot = discord.Bot(intents=intents)
+bot = discord.Bot(intents=intents, auto_sync_commands=False)
+
+@bot.listen()
+async def on_connect():
+    '''Sync commands'''
+    guilds = [guild.id for guild in bot.guilds]
+
+    if devserver in guilds:
+        await bot.sync_commands()
+    else:
+        print(f'Not in server {devserver}. Closing ...')
+        await bot.close()
 
 @bot.listen()
 async def on_ready():
@@ -157,7 +181,7 @@ async def stoplog_error(ctx, error):
     else:
         raise error
 
-@bot.slash_command()
+@bot.slash_command(guild_ids=[devserver])
 @commands.guild_only()
 @commands.bot_has_permissions(read_message_history=True, send_messages=True, attach_files=True)
 @commands.is_owner()
@@ -181,7 +205,7 @@ async def backup_error(ctx, error):
     else:
         raise error
 
-@bot.slash_command()
+@bot.slash_command(guild_ids=[devserver])
 @commands.is_owner()
 async def reports(ctx):
     '''Get the next report'''
