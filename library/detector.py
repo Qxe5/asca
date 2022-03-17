@@ -31,10 +31,6 @@ async def official(link):
         return True
     return False
 
-async def decodeblock(message):
-    '''Remove code blocks from message'''
-    return message.replace('`', '')
-
 async def decyrillic(text):
     '''Transform Cyrillic into ASCII and return the transformation'''
     replacements = (
@@ -49,6 +45,15 @@ async def decyrillic(text):
         text = text.replace(*replacement)
 
     return text
+
+async def removesubstrings(strs):
+    '''Filter the strings which are proper substrings of another string in the list'''
+    for current_string in strs[:]:
+        for comparison_string in strs[:]:
+            if current_string in comparison_string and current_string != comparison_string:
+                strs.remove(current_string)
+
+    return strs
 
 async def removewhitespace(message):
     '''Remove whitespace from message'''
@@ -80,11 +85,18 @@ async def is_scam(message):
     embeds = message.embeds
 
     message = original_message.lower().replace('http', ' http').replace('://\n', '://')
-    message = await decodeblock(message)
     message = await decyrillic(message)
 
     link_extractor = URLExtract()
     link_extractor.update_when_older(1)
+
+    tlds = link_extractor._load_cached_tlds() # pylint: disable=protected-access
+    tlds = [tld for tld in tlds if tld in message]
+    tlds = await removesubstrings(tlds)
+
+    for tld in tlds:
+        message = message.replace(tld, f'{tld}/')
+
     urls = link_extractor.find_urls(message, with_schema_only=True, only_unique=True)
     message_links = [urlparse(url).netloc for url in urls]
     message_links = [
@@ -193,7 +205,7 @@ async def log(message):
         logging_channel = message.guild.get_channel(logging_channel)
 
         if logging_channel: # logging channel still exists
-            scam_message = await decodeblock(message.content)
+            scam_message = message.content.replace('`', '')
 
             mode = await db.getmode(message.guild.id)
 
