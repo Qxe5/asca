@@ -47,13 +47,14 @@ async def decyrillic(text):
     return text
 
 async def removesubstrings(strs):
-    '''Filter the strings which are proper substrings of another string in the list'''
-    for current_string in strs[:]:
-        for comparison_string in strs[:]:
+    '''Filter the strings which are proper substrings of another string in the set'''
+    rmstrs = set()
+    for current_string in strs:
+        for comparison_string in strs:
             if current_string in comparison_string and current_string != comparison_string:
-                strs.remove(current_string)
+                rmstrs.add(current_string)
 
-    return strs
+    return strs - rmstrs
 
 async def removewhitespace(message):
     '''Remove whitespace from message'''
@@ -91,7 +92,7 @@ async def is_scam(message):
     link_extractor.update_when_older(1)
 
     tlds = link_extractor._load_cached_tlds() # pylint: disable=protected-access
-    tlds = [tld for tld in tlds if tld in message]
+    tlds = {tld for tld in tlds if tld in message}
     tlds = await removesubstrings(tlds)
 
     for tld in tlds:
