@@ -1,17 +1,14 @@
 '''Transient management of scam links'''
-import requests
+from library.requester import scamlinks
 
 links = []
 pendinglinks = []
 
 async def update():
     '''Updates scam links'''
-    source = 'https://raw.githubusercontent.com/DevSpen/scam-links/master/src/links.txt'
-    response = requests.get(source)
+    response = await scamlinks()
 
-    if not response.ok:
-        return
-
-    links.clear()
-    links.extend(response.text.splitlines())
-    links.extend(pendinglinks)
+    if response:
+        links.clear()
+        links.extend(response.splitlines())
+        links.extend(pendinglinks)
