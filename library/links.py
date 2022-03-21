@@ -2,7 +2,7 @@
 from library.requester import scamlinks
 
 links = []
-pendinglinks = []
+pendinglinks = ['gibthub.com']
 
 async def update():
     '''Updates scam links'''
