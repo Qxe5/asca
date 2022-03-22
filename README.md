@@ -3,7 +3,7 @@ Antiscam Discord Bot
 
 Asca moderates scammers and deletes scam messages
 
-![Profile](https://cdn.discordapp.com/attachments/936463189237977139/945782270076289084/profile.png)
+![Profile](https://cdn.discordapp.com/attachments/936463189237977139/955675143131267072/profile.png)
 
 *Optionally configure via slash commands*
 
