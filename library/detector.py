@@ -126,7 +126,7 @@ async def is_scam(message):
             return True
 
     for url in urls:
-        if any(ext in urlparse(url).path for ext in ('.exe', '.zip', '.rar')):
+        if any(ext in url for ext in ('.exe', '.zip', '.rar')):
             await reportmessage(report)
             return True
 
