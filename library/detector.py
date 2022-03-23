@@ -1,6 +1,7 @@
 '''Scam detection and punishment'''
 from datetime import timedelta
 from difflib import SequenceMatcher
+from re import search
 from string import Template
 from urllib.parse import urlparse
 
@@ -46,15 +47,23 @@ async def decyrillic(text):
 
     return text
 
-async def removesubstrings(strs):
-    '''Filter the strings which are proper substrings of another string in the set'''
-    rmstrs = set()
-    for current_string in strs:
-        for comparison_string in strs:
-            if current_string in comparison_string and current_string != comparison_string:
-                rmstrs.add(current_string)
+async def slash(message, tlds):
+    '''Insert a forward slash into the message after TLDs not succeeded by one and return it'''
+    urls = {word for word in message.split(' ') if word.startswith('http')}
 
-    return strs - rmstrs
+    for url in urls:
+        match = search(r'^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?', url)
+
+        path = match.group(5)
+        if not path:
+            domain = match.group(4)
+            tld = sorted((tld for tld in tlds if tld in domain),
+                        key=lambda tld, domain=domain : (domain.rfind(tld), len(tld)))[-1]
+            newdomain = f'{tld}/'.join(domain.rsplit(tld, maxsplit=1))
+
+            message = message.replace(domain, newdomain)
+
+    return message
 
 async def removewhitespace(message):
     '''Remove whitespace from message'''
@@ -94,10 +103,8 @@ async def is_scam(message):
 
     tlds = link_extractor._load_cached_tlds() # pylint: disable=protected-access
     tlds = {tld for tld in tlds if tld in message}
-    tlds = await removesubstrings(tlds)
 
-    for tld in tlds:
-        message = message.replace(tld, f'{tld}/')
+    message = await slash(message, tlds)
 
     urls = link_extractor.find_urls(message, with_schema_only=True, only_unique=True)
     message_links = [urlparse(url).netloc for url in urls]
