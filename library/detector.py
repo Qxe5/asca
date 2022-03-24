@@ -253,9 +253,9 @@ async def log(message):
         else:
             await db.delete_logging_channel(message.guild.id)
 
-async def process(message, botuser):
+async def process(message):
     '''Processes a message'''
-    if message.author == botuser or isinstance(message.channel, DMChannel):
+    if message.author.bot or isinstance(message.channel, DMChannel):
         return
 
     if await is_scam(message) and await punish(message):

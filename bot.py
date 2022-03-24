@@ -70,13 +70,13 @@ async def backup_database(channel):
 @bot.listen()
 async def on_message(message):
     '''Handle messages'''
-    await process(message, bot.user)
+    await process(message)
 
 @bot.listen()
 async def on_message_edit(previous_message, current_message):
     '''Handle message edits'''
     if current_message.content != previous_message.content:
-        await process(current_message, bot.user)
+        await process(current_message)
 
 # commands
 @bot.slash_command()
