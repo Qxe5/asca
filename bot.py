@@ -64,7 +64,7 @@ update_scamlinks.start()
 @tasks.loop(hours=1)
 async def backup_database(channel):
     '''Backup the database periodically to the channel'''
-    await backup_db(channel, (guild.id for guild in bot.guilds))
+    await backup_db(channel, tuple(guild.id for guild in bot.guilds))
 
 # process messages
 @bot.listen()
