@@ -18,7 +18,7 @@ permission_error_template = Template('Scam detected, but I need the `$permission
 
 async def official(link):
     '''Determine and return whether the link is official'''
-    official_links = [
+    official_links = {
         'discord.com',
         'discord.gg',
         'discord.gift',
@@ -26,7 +26,7 @@ async def official(link):
         'cdn.discordapp.com',
         'discordstatus.com',
         'dis.gd'
-    ]
+    }
 
     if link in official_links:
         return True
@@ -76,7 +76,7 @@ async def contains_maliciousterm(message):
     '''Determine and return whether the message contains a malicious term'''
     message = await removewhitespace(message)
 
-    terms = [
+    terms = {
         'nitro',
         await removewhitespace('who is first?'),
         await removewhitespace('who will catch this gift?'),
@@ -86,7 +86,7 @@ async def contains_maliciousterm(message):
         await removewhitespace('test my first game'),
         await removewhitespace('i made a game can you test play?'),
         await removewhitespace('i have coded a new game')
-    ]
+    }
 
     for term in terms:
         if term in message:
@@ -110,10 +110,10 @@ async def is_scam(message):
     message = await slash(message, tlds)
 
     urls = link_extractor.find_urls(message, with_schema_only=True, only_unique=True)
-    message_links = [urlparse(url).netloc for url in urls]
-    message_links = [
+    message_links = {urlparse(url).netloc for url in urls}
+    message_links = {
         message_link for message_link in message_links if not await official(message_link)
-    ]
+    }
     report = '\n'.join(message_links)
 
     for message_link in message_links:

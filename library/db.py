@@ -27,7 +27,7 @@ async def getmode(guild):
     '''Get and return whether the guild is in Timout or Ban mode'''
     connection, cursor = await connect()
 
-    mode = cursor.execute('select * from modes where guild = ?', [guild]).fetchone()
+    mode = cursor.execute('select * from modes where guild = ?', (guild)).fetchone()
 
     await disconnect(connection)
 
@@ -39,7 +39,7 @@ async def set_timeoutmode(guild):
     '''Set the punishment mode of the guild to Timeout'''
     connection, cursor = await connect()
 
-    cursor.execute('delete from modes where guild = ?', [guild])
+    cursor.execute('delete from modes where guild = ?', (guild))
 
     await disconnect(connection)
 
@@ -47,7 +47,7 @@ async def setbanmode(guild):
     '''Set the punishment mode of the guild to Ban'''
     connection, cursor = await connect()
 
-    cursor.execute('insert into modes values(?)', [guild])
+    cursor.execute('insert into modes values(?)', (guild))
 
     await disconnect(connection)
 
@@ -55,7 +55,7 @@ async def get_timeoutperiod(guild):
     '''Retrieve and return the timeout period for the guild'''
     connection, cursor = await connect()
 
-    days = cursor.execute('select days from periods where guild = ?', [guild]).fetchone()
+    days = cursor.execute('select days from periods where guild = ?', (guild)).fetchone()
 
     await disconnect(connection)
 
@@ -70,7 +70,7 @@ async def set_timeoutperiod(guild, days):
 
     connection, cursor = await connect()
 
-    cursor.execute('replace into periods values (?, ?)', [guild, days])
+    cursor.execute('replace into periods values (?, ?)', (guild, days))
 
     await disconnect(connection)
 
@@ -78,7 +78,7 @@ async def get_punishment_count(guild):
     '''Get and return the timeouts/bans for the guild'''
     connection, cursor = await connect()
 
-    count = cursor.execute('select count from punishments where guild = ?', [guild]).fetchone()
+    count = cursor.execute('select count from punishments where guild = ?', (guild)).fetchone()
 
     await disconnect(connection)
 
@@ -90,14 +90,14 @@ async def count_punishment(guild):
     '''Increment punishment count for the guild'''
     connection, cursor = await connect()
 
-    count = cursor.execute('select count from punishments where guild = ?', [guild]).fetchone()
+    count = cursor.execute('select count from punishments where guild = ?', (guild)).fetchone()
 
     if not count:
-        cursor.execute('insert into punishments values (?, ?)', [guild, 1])
+        cursor.execute('insert into punishments values (?, ?)', (guild, 1))
     else:
         count = count[0]
 
-        cursor.execute('update punishments set count = ? where guild = ?', [count + 1, guild])
+        cursor.execute('update punishments set count = ? where guild = ?', (count + 1, guild))
 
     await disconnect(connection)
 
@@ -105,7 +105,7 @@ async def get_logging_channel(guild):
     '''Get and return the logging channel of the guild (or None if it is not set)'''
     connection, cursor = await connect()
 
-    channel = cursor.execute('select channel from logs where guild = ?', [guild]).fetchone()
+    channel = cursor.execute('select channel from logs where guild = ?', (guild)).fetchone()
 
     await disconnect(connection)
 
@@ -118,7 +118,7 @@ async def set_logging_channel(guild, channel):
     '''Sets the logging channel of the guild'''
     connection, cursor = await connect()
 
-    cursor.execute('replace into logs values (?, ?)', [guild, channel])
+    cursor.execute('replace into logs values (?, ?)', (guild, channel))
 
     await disconnect(connection)
 
@@ -126,7 +126,7 @@ async def delete_logging_channel(guild):
     '''Delete the logging channel of the guild'''
     connection, cursor = await connect()
 
-    cursor.execute('delete from logs where guild = ?', [guild])
+    cursor.execute('delete from logs where guild = ?', (guild))
 
     await disconnect(connection)
 
@@ -134,7 +134,7 @@ async def prune(guilds):
     '''Prune the database for guilds the bot is not in'''
     connection, cursor = await connect()
 
-    tables = ['modes', 'periods', 'punishments', 'logs']
+    tables = {'modes', 'periods', 'punishments', 'logs'}
     placeholders = ', '.join('?' * len(guilds))
 
     for table in tables:

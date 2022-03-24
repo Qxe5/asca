@@ -40,7 +40,7 @@ bot = discord.Bot(intents=intents, auto_sync_commands=False)
 @bot.listen()
 async def on_connect():
     '''Sync commands'''
-    guilds = [guild.id for guild in bot.guilds]
+    guilds = {guild.id for guild in bot.guilds}
 
     if devserver in guilds:
         await bot.sync_commands()
@@ -64,7 +64,7 @@ update_scamlinks.start()
 @tasks.loop(hours=1)
 async def backup_database(channel):
     '''Backup the database periodically to the channel'''
-    await backup_db(channel, [guild.id for guild in bot.guilds])
+    await backup_db(channel, (guild.id for guild in bot.guilds))
 
 # process messages
 @bot.listen()
