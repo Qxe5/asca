@@ -1,4 +1,6 @@
 '''HTTP requests'''
+import asyncio
+
 import aiohttp
 
 async def scamlinks():
@@ -10,5 +12,5 @@ async def scamlinks():
             async with client.get(source) as response:
                 if response.ok:
                     return await response.text()
-        except aiohttp.ClientConnectionError:
+        except (aiohttp.ClientConnectionError, asyncio.TimeoutError):
             return None
