@@ -34,13 +34,13 @@ async def official(link):
 
 async def decyrillic(text):
     '''Transform Cyrillic into ASCII and return the transformation'''
-    replacements = (
+    replacements = {
         ('а', 'a'),
         ('с', 'c'),
         ('е', 'e'),
         ('о', 'o'),
         ('у', 'y')
-    )
+    }
 
     for replacement in replacements:
         text = text.replace(*replacement)
