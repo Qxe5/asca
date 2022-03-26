@@ -12,6 +12,7 @@ from urlextract import URLExtract
 from library import db
 from library.links import links
 from library.reports import reportmessage
+from library.requester import unshorten
 
 permission_error_template = Template('Scam detected, but I need the `$permission` permission '
                                      'or to be placed higher on the `Roles` list')
@@ -109,7 +110,8 @@ async def is_scam(message):
 
     message = await slash(message, tlds)
 
-    urls = link_extractor.find_urls(message, with_schema_only=True, only_unique=True)
+    urls = link_extractor.find_urls(original_message, with_schema_only=True, only_unique=True)
+    urls = {await unshorten(url) for url in urls}
     message_links = {urlparse(url).netloc for url in urls}
     message_links = {
         message_link for message_link in message_links if not await official(message_link)
