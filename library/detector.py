@@ -96,22 +96,21 @@ async def contains_maliciousterm(message):
 
 async def is_scam(message):
     '''Determine and return whether the message is a scam'''
-    original_message = message.content
-    embeds = message.embeds
-
-    message = original_message.lower().replace('http', ' http').replace('://\n', '://')
-    message = await decyrillic(message)
+    fmessage = message.content.replace('http', ' http').replace('://\n', '://')
 
     link_extractor = URLExtract()
     link_extractor.update_when_older(1)
 
     tlds = link_extractor._load_cached_tlds() # pylint: disable=protected-access
-    tlds = {tld for tld in tlds if tld in message}
+    tlds = {tld for tld in tlds if tld in fmessage}
+    fmessage = await slash(fmessage, tlds)
 
-    message = await slash(message, tlds)
-
-    urls = link_extractor.find_urls(original_message, with_schema_only=True, only_unique=True)
+    urls = link_extractor.find_urls(fmessage, with_schema_only=True, only_unique=True)
     urls = {await unshorten(url) for url in urls}
+
+    fmessage = fmessage.lower()
+    fmessage = await decyrillic(fmessage)
+
     message_links = {urlparse(url).netloc for url in urls}
     message_links = {
         message_link for message_link in message_links if not await official(message_link)
@@ -138,14 +137,14 @@ async def is_scam(message):
             await reportmessage(report)
             return True
 
-        message = message.replace(url, '')
+        fmessage = fmessage.replace(url, '')
 
     if message_links:
-        if await contains_maliciousterm(message):
+        if await contains_maliciousterm(fmessage):
             await reportmessage(report)
             return True
 
-        for embed in embeds:
+        for embed in message.embeds:
             if embed.provider.name and (await decyrillic(embed.provider.name)).lower() == 'discord':
                 await reportmessage(report)
                 return True
