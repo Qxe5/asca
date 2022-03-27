@@ -1,5 +1,6 @@
 '''Scam detection and punishment'''
-from datetime import timedelta
+from asyncio import sleep
+from datetime import datetime, timezone, timedelta
 from difflib import SequenceMatcher
 from re import search
 from string import Template
@@ -94,7 +95,23 @@ async def contains_maliciousterm(message):
             return True
     return False
 
-async def is_scam(message):
+async def spamcache(message, cached_messages):
+    '''Get and return possible spam messages from the current message and the cached messages'''
+    return {
+        cached_message for cached_message in cached_messages
+        if message.guild == cached_message.guild
+        and message.author == cached_message.author
+        and message.content == cached_message.content
+        and datetime.now(timezone.utc) - cached_message.created_at < timedelta(minutes=1)
+    }
+
+async def spam(message, cached_messages):
+    '''Determine and return whether the message is spam'''
+    maxrepeat = 5
+
+    return len(await spamcache(message, cached_messages)) > maxrepeat
+
+async def scam(message, cached_messages): # pylint: disable=too-many-return-statements
     '''Determine and return whether the message is a scam'''
     fmessage = message.content.replace('http', ' http').replace('://\n', '://')
 
@@ -149,6 +166,10 @@ async def is_scam(message):
                 await reportmessage(report)
                 return True
 
+    if await spam(message, cached_messages):
+        await reportmessage(report)
+        return True
+
     return False
 
 async def reply(message, replymessage):
@@ -192,6 +213,12 @@ async def delete(message):
         await reply(message, permission_error_template.substitute(permission='Manage Messages'))
     except NotFound:
         pass
+
+async def prune(messages):
+    '''Deletes the messages'''
+    for message in messages:
+        await delete(message)
+        await sleep(0.5)
 
 async def punish(message):
     '''Punish the member which sent the message and return whether the punishment was succesfull'''
@@ -254,11 +281,11 @@ async def log(message):
         else:
             await db.delete_logging_channel(message.guild.id)
 
-async def process(message):
+async def process(message, cached_messages):
     '''Processes a message'''
     if message.author.bot or isinstance(message.channel, DMChannel):
         return
 
-    if await is_scam(message) and await punish(message):
+    if await scam(message, cached_messages) and await punish(message):
         await log(message)
-        await delete(message)
+        await prune(await spamcache(message, cached_messages))
