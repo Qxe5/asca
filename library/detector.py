@@ -100,10 +100,10 @@ async def spamcache(message, cached_messages):
     '''Get and return possible spam messages from the current message and the cached messages'''
     return {
         cached_message for cached_message in cached_messages
-        if message.content
+        if (message.content or message.stickers)
         and message.guild == cached_message.guild
         and message.author == cached_message.author
-        and message.content == cached_message.content
+        and (message.content == cached_message.content or message.stickers == cached_message.stickers)
         and datetime.now(timezone.utc) - cached_message.created_at < timedelta(minutes=1)
     }
 
