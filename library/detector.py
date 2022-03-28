@@ -1,5 +1,5 @@
 '''Scam detection and punishment'''
-from asyncio import sleep
+from asyncio import Lock, sleep
 from datetime import datetime, timezone, timedelta
 from difflib import SequenceMatcher
 from re import search
@@ -15,6 +15,7 @@ from library.links import links
 from library.reports import reportmessage
 from library.requester import unshorten
 
+deletelock = Lock()
 permission_error_template = Template('Scam detected, but I need the `$permission` permission '
                                      'or to be placed higher on the `Roles` list')
 
@@ -216,9 +217,10 @@ async def delete(message):
 
 async def prune(messages):
     '''Deletes the messages'''
-    for message in messages:
-        await delete(message)
-        await sleep(0.5)
+    async with deletelock:
+        for message in messages:
+            await delete(message)
+            await sleep(0.5)
 
 async def punish(message):
     '''Punish the member which sent the message and return whether the punishment was succesfull'''
