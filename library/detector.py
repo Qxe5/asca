@@ -220,7 +220,7 @@ async def prune(messages):
     async with deletelock:
         for message in messages:
             await delete(message)
-            await sleep(0.5)
+            await sleep(1)
 
 async def punish(message):
     '''Punish the member which sent the message and return whether the punishment was succesfull'''
