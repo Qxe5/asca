@@ -105,11 +105,14 @@ async def contains_maliciousterm(message):
             return True
     return False
 
-async def spamcache(message, cached_messages):
-    '''Get and return possible spam messages from the current message and the cached messages'''
+async def spamcache(message, cached_messages, time):
+    '''
+    Get and return possible spam messages from the current message and the cached messages,
+    sent within the time period
+    '''
     return {
         cached_message for cached_message in cached_messages
-        if datetime.now(timezone.utc) - cached_message.created_at < timedelta(seconds=30)
+        if datetime.now(timezone.utc) - cached_message.created_at < time
         and message.guild == cached_message.guild
         and message.author == cached_message.author
         and (message.content and message.content == cached_message.content or
@@ -120,7 +123,7 @@ async def spam(message, cached_messages):
     '''Determine and return whether the message is spam'''
     maxrepeat = 5
 
-    return len(await spamcache(message, cached_messages)) > maxrepeat
+    return len(await spamcache(message, cached_messages, timedelta(seconds=30))) > maxrepeat
 
 async def scam(message, cached_messages): # pylint: disable=too-many-return-statements
     '''Determine and return whether the message is a scam'''
@@ -300,4 +303,4 @@ async def process(message, cached_messages):
 
     if await scam(message, cached_messages) and await punish(message):
         await log(message)
-        await prune(await spamcache(message, cached_messages))
+        await prune(await spamcache(message, cached_messages, timedelta.max))
