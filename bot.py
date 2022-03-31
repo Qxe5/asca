@@ -107,7 +107,10 @@ async def switchmode_error(ctx, error):
 @bot.slash_command()
 @commands.guild_only()
 @commands.has_permissions(administrator=True)
-async def timeoutdays(ctx, days : int):
+async def timeoutdays(
+    ctx,
+    days : discord.Option(int, 'Enter the number of days:', min_value=1, max_value=28)
+):
     '''Set the number of days timeouts are for'''
     if days < 1 or days > 28:
         raise discord.InvalidArgument('Invalid number of days')
