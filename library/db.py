@@ -69,9 +69,8 @@ async def set_timeoutperiod(guild, days):
 
     if days == DEFAULT_TIMEOUT_DAYS:
         cursor.execute('delete from periods where guild = ?', (guild,))
-        return
-
-    cursor.execute('replace into periods values (?, ?)', (guild, days))
+    else:
+        cursor.execute('replace into periods values (?, ?)', (guild, days))
 
     await disconnect(connection)
 
