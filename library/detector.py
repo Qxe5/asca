@@ -27,6 +27,7 @@ async def official(link):
         'discord.gift',
         'discordapp.com',
         'cdn.discordapp.com',
+        'media.discordapp.net',
         'discordstatus.com',
         'dis.gd'
     }
