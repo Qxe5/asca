@@ -91,6 +91,7 @@ async def contains_maliciousterm(message):
 
     terms = {
         'nitro',
+        'password:',
         await removewhitespace('who is first?'),
         await removewhitespace('who will catch this gift?'),
         await removewhitespace('take it guys'),
@@ -98,7 +99,8 @@ async def contains_maliciousterm(message):
         await removewhitespace('can you check out the game i created today'),
         await removewhitespace('test my first game'),
         await removewhitespace('i made a game can you test play?'),
-        await removewhitespace('i have coded a new game')
+        await removewhitespace('i have coded a new game'),
+        await removewhitespace('farm cryptocurrency')
     }
 
     for term in terms:
