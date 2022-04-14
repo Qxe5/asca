@@ -73,7 +73,7 @@ async def slash(message, tlds):
             try:
                 tld = sorted((tld for tld in tlds if tld in domain),
                             key=lambda tld, domain=domain : (domain.rfind(tld), len(tld)))[-1]
-            except IndexError:
+            except (TypeError, IndexError):
                 continue
             newdomain = f'{tld}/'.join(domain.rsplit(tld, maxsplit=1))
 
