@@ -167,7 +167,7 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
         parsedurl = urlparse(url)
         parsedurl = parsedurl.path + parsedurl.query
 
-        if any(ext in parsedurl for ext in ('.exe', '.zip', '.rar')):
+        if any(ext in parsedurl for ext in ('.exe', '.msi', '.zip', '.rar')):
             await reportmessage(report)
             return True
 
