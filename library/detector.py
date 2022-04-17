@@ -139,7 +139,10 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
     tlds = {tld for tld in tlds if tld in fmessage}
     fmessage = await slash(fmessage, tlds)
 
-    urls = link_extractor.find_urls(fmessage, with_schema_only=True, only_unique=True)
+    urls = (
+        url for url in link_extractor.find_urls(fmessage, with_schema_only=True, only_unique=True)
+            if url not in await db.getwhitelist(message.guild.id)
+    )
     urls = {await unshorten(url) for url in urls}
 
     fmessage = fmessage.lower()
