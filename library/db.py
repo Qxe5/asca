@@ -101,6 +101,25 @@ async def delete_logging_channel(guild):
     async with connect() as cursor:
         cursor.execute('delete from logs where guild = ?', (guild,))
 
+async def getwhitelist(guild):
+    '''Get and return the guilds whitelist'''
+    async with connect() as cursor:
+        return [
+            url[0] for url in cursor.execute(
+                'select link from whitelist where guild = ?', [guild])
+            .fetchall()
+        ]
+
+async def addwhitelist(guild, url):
+    '''Add the URL to the guilds whitelist'''
+    async with connect() as cursor:
+        cursor.execute('insert into whitelist(guild, link) values (?, ?)', [guild, url])
+
+async def clearwhitelist(guild):
+    '''Clear the guilds whitelist'''
+    async with connect() as cursor:
+        cursor.execute('delete from whitelist where guild = ?', [guild])
+
 async def prune(guilds):
     '''Prune the database for guilds the bot is not in'''
     tables = {'modes', 'periods', 'punishments', 'logs'}
