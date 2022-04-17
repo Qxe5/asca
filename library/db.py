@@ -63,7 +63,7 @@ async def set_timeoutperiod(guild, days):
 async def get_punishment_count(guild):
     '''Get and return the timeouts/bans for the guild'''
     async with connect() as cursor:
-        count = cursor.execute('select count from punishments where guild = ?', (guild,)).fetchone()
+        count = cursor.execute('select total from punishments where guild = ?', (guild,)).fetchone()
 
     if not count:
         return 0
@@ -72,14 +72,14 @@ async def get_punishment_count(guild):
 async def count_punishment(guild):
     '''Increment punishment count for the guild'''
     async with connect() as cursor:
-        count = cursor.execute('select count from punishments where guild = ?', (guild,)).fetchone()
+        count = cursor.execute('select total from punishments where guild = ?', (guild,)).fetchone()
 
         if not count:
             cursor.execute('insert into punishments values (?, ?)', (guild, 1))
         else:
             count = count[0]
 
-            cursor.execute('update punishments set count = ? where guild = ?', (count + 1, guild))
+            cursor.execute('update punishments set total = ? where guild = ?', (count + 1, guild))
 
 async def get_logging_channel(guild):
     '''Get and return the logging channel of the guild (or None if it is not set)'''

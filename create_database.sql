@@ -13,7 +13,7 @@ create table if not exists periods(
 
 create table if not exists punishments(
     guild integer primary key,
-    count integer not null check(count > 0)
+    total integer not null check(total > 0)
 );
 
 create table if not exists logs(
