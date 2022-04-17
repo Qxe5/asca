@@ -20,3 +20,9 @@ create table if not exists logs(
     guild integer primary key,
     channel integer not null
 );
+
+create table if not exists whitelist(
+    id integer primary key,
+    guild integer not null,
+    link text not null
+);
