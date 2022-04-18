@@ -16,6 +16,7 @@ from library.detector import process
 from library.error import nodm, cantlog, notadmin, notowner, invalid_days
 from library.links import update
 from library.reports import reportmessage, getreport
+from library.ui import Whitelist
 
 signal(SIGINT, lambda signalnumber, stackframe: sys.exit())
 
@@ -181,6 +182,28 @@ async def stoplog_error(ctx, error):
     if isinstance(error, commands.NoPrivateMessage):
         await nodm(ctx)
     elif isinstance(error, commands.MissingPermissions):
+        await notadmin(ctx)
+    else:
+        raise error
+
+@bot.slash_command()
+@commands.guild_only()
+@commands.has_permissions(administrator=True)
+async def whitelist(
+    ctx,
+    clear : discord.Option(bool, 'Should I clear the whitelist?', default=False)
+):
+    '''Exclude URLs from the filter'''
+    if clear:
+        await db.clearwhitelist(ctx.guild.id)
+        await ctx.respond('Whitelist cleared', ephemeral=True)
+    else:
+        await ctx.send_modal(Whitelist(sorted(await db.getwhitelist(ctx.guild.id)), 'Whitelist'))
+
+@whitelist.error
+async def whitelist_error(ctx, error):
+    '''Handle a lack of the Administrator permission'''
+    if isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
     else:
         raise error
