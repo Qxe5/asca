@@ -143,7 +143,7 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
         url for url in link_extractor.find_urls(fmessage, with_schema_only=True, only_unique=True)
             if url not in await db.getwhitelist(message.guild.id)
     )
-    urls = {await unshorten(url) for url in urls}
+    urls = {await unshorten(url) async for url in urls}
 
     fmessage = fmessage.lower()
     fmessage = await decyrillic(fmessage)
