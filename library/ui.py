@@ -3,6 +3,7 @@ import discord
 from urlextract import URLExtract
 
 from library import db
+from library.detector import slash
 
 class Whitelist(discord.ui.Modal):
     '''A representation of a whitelist modal'''
@@ -34,7 +35,13 @@ class Whitelist(discord.ui.Modal):
             await db.clearwhitelist(interaction.guild_id)
 
             for url in urls:
-                await db.addwhitelist(interaction.guild_id, url)
+                await db.addwhitelist(
+                    interaction.guild_id,
+                    await slash(
+                        url,
+                        {tld for tld in link_extractor._load_cached_tlds() if tld in url} # pylint: disable=protected-access
+                    )
+                )
 
             await interaction.response.send_message(
                 'Done. Run the command again to check your whitelist.',
