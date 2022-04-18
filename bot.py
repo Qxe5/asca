@@ -44,7 +44,7 @@ async def on_connect():
     guilds = {guild.id for guild in bot.guilds}
 
     if devserver in guilds:
-        await bot.sync_commands()
+        await bot.sync_commands(force=True)
     else:
         print(f'Not in server {devserver}. Closing ...')
         await bot.close()
