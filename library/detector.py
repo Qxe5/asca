@@ -122,11 +122,9 @@ async def spamcache(message, cached_messages, time):
             message.stickers and message.stickers == cached_message.stickers)
     }
 
-async def spam(message, cached_messages):
+async def spam(message, cached_messages, maxrepeat=5):
     '''Determine and return whether the message is spam'''
-    maxrepeat = 5
-
-    return len(await spamcache(message, cached_messages, timedelta(seconds=30))) > maxrepeat
+    return len(await spamcache(message, cached_messages, timedelta(seconds=15))) > maxrepeat
 
 async def scam(message, cached_messages): # pylint: disable=too-many-return-statements
     '''Determine and return whether the message is a scam'''
