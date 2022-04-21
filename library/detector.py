@@ -133,22 +133,21 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
     link_extractor = URLExtract()
     link_extractor.update_when_older(1)
 
-    tlds = link_extractor._load_cached_tlds() # pylint: disable=protected-access
-    tlds = {tld for tld in tlds if tld in fmessage}
+    tlds = {tld for tld in link_extractor._load_cached_tlds() if tld in fmessage} # pylint: disable=protected-access
     fmessage = await slash(fmessage, tlds)
 
-    urls = (
-        url for url in link_extractor.find_urls(fmessage, with_schema_only=True, only_unique=True)
-            if not any(url.startswith(entry) for entry in await db.getwhitelist(message.guild.id))
-    )
-    urls = {await unshorten(url) async for url in urls}
+    urls = {
+        await unshorten(url)
+        for url in link_extractor.find_urls(fmessage, with_schema_only=True, only_unique=True)
+        if not any(url.startswith(entry) for entry in await db.getwhitelist(message.guild.id))
+    }
 
-    fmessage = fmessage.lower()
-    fmessage = await decyrillic(fmessage)
+    fmessage = await decyrillic(fmessage.lower())
 
-    message_links = {urlparse(url).netloc for url in urls}
     message_links = {
-        message_link for message_link in message_links if not await official(message_link)
+        message_link
+        for message_link in {urlparse(url).netloc for url in urls}
+        if not await official(message_link)
     }
     report = '\n'.join(message_links)
 
