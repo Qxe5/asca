@@ -7,6 +7,7 @@ from string import Template
 from urllib.parse import urlparse
 
 from discord import Embed, Colour, DMChannel, User, Forbidden, NotFound, HTTPException
+from discord.utils import remove_markdown
 from tldextract import extract
 from urlextract import URLExtract
 
@@ -81,6 +82,10 @@ async def slash(message, tlds):
 
     return message
 
+async def protocol(url):
+    '''Add a protocol to the URL if it does not currently have one and return it'''
+    return f'https://{url}' if not url.startswith('http') else url
+
 async def removewhitespace(message):
     '''Remove whitespace from message'''
     return ''.join(message.split())
@@ -128,7 +133,7 @@ async def spam(message, cached_messages, maxrepeat=5):
 
 async def scam(message, cached_messages): # pylint: disable=too-many-return-statements
     '''Determine and return whether the message is a scam'''
-    fmessage = message.content.replace('http', ' http').replace('://\n', '://')
+    fmessage = remove_markdown(message.content.replace('http', ' http').replace('://\n', '://'))
 
     link_extractor = URLExtract()
     link_extractor.update_when_older(1)
@@ -137,8 +142,8 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
     fmessage = await slash(fmessage, tlds)
 
     urls = {
-        await unshorten(url)
-        for url in link_extractor.find_urls(fmessage, with_schema_only=True, only_unique=True)
+        await unshorten(await protocol(url))
+        for url in link_extractor.find_urls(fmessage, only_unique=True)
         if not any(url.startswith(entry) for entry in await db.getwhitelist(message.guild.id))
     }
 
