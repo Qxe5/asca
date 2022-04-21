@@ -36,7 +36,7 @@ except ValueError as invalid_devserver:
 
 # init
 intents = discord.Intents(guilds=True, guild_messages=True, message_content=True)
-bot = discord.Bot(intents=intents)
+bot = discord.Bot(intents=intents, auto_sync_commands=False)
 
 @bot.listen()
 async def on_connect():
