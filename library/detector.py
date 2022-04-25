@@ -33,9 +33,7 @@ async def official(link):
         'dis.gd'
     }
 
-    if link in official_links:
-        return True
-    return False
+    return link in official_links
 
 async def decyrillic(text):
     '''Transform Cyrillic into ASCII and return the transformation'''
@@ -108,10 +106,7 @@ async def contains_maliciousterm(message):
         await removewhitespace('farm cryptocurrency')
     }
 
-    for term in terms:
-        if term in message:
-            return True
-    return False
+    return any(term in message for term in terms)
 
 async def spamcache(message, cached_messages, time):
     '''
