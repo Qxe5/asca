@@ -209,6 +209,11 @@ async def timeout(message, reason):
     except Forbidden:
         await reply(message, permission_error_template.substitute(permission='Moderate Members'))
         return False
+    except HTTPException:
+        await reply(message,
+            'Scam detected, but I failed to Timeout this member due to a Discord Server error'
+        )
+        return False
 
 async def ban(message, reason):
     '''
