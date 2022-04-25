@@ -20,7 +20,7 @@ deletelock = Lock()
 permission_error_template = Template('Scam detected, but I need the `$permission` permission '
                                      'or to be placed higher on the `Roles` list')
 
-async def official(link):
+async def is_official(link):
     '''Determine and return whether the link is official'''
     official_links = {
         'discord.com',
@@ -147,7 +147,7 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
     message_links = {
         message_link
         for message_link in {urlparse(url).netloc for url in urls}
-        if not await official(message_link)
+        if not await is_official(message_link)
     }
     report = '\n'.join(message_links)
 
@@ -164,10 +164,10 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
             return True
 
     for url in urls:
-        parsedurl = urlparse(url)
-        parsedurl = parsedurl.path + parsedurl.query
+        parsed_url = urlparse(url)
+        parsed_url = parsed_url.path + parsed_url.query
 
-        if any(ext in parsedurl for ext in ('.exe', '.msi', '.zip', '.rar')):
+        if any(ext in parsed_url for ext in {'.exe', '.msi', '.zip', '.rar'}):
             await reportmessage(report)
             return True
 
