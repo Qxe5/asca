@@ -85,7 +85,7 @@ async def protocol(url):
     return f'https://{url}' if not url.startswith('http') else url
 
 async def removewhitespace(message):
-    '''Remove whitespace from message'''
+    '''Remove whitespace from message and return it'''
     return ''.join(message.split())
 
 async def contains_maliciousterm(message):
