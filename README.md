@@ -40,7 +40,7 @@ Both modes of operation require `Manage Messages` to delete scam messages
 <summary>Credits</summary>
 
 * **Liz** (Lead Designer)
-* **Mас** (Lead Tester)
+* **Mac** (Lead Tester)
 * **Lauch** (Tester)
 * **Sam** (Tester)
 </details>
