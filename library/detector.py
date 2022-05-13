@@ -103,7 +103,8 @@ async def contains_maliciousterm(message):
         await removewhitespace('test my first game'),
         await removewhitespace('i made a game can you test play?'),
         await removewhitespace('i have coded a new game'),
-        await removewhitespace('farm cryptocurrency')
+        await removewhitespace('farm cryptocurrency'),
+        await removewhitespace('+1 (256) 482-1848')
     }
 
     return any(term in message for term in terms)
