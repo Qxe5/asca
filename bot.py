@@ -80,8 +80,8 @@ async def on_message_edit(previous_message, current_message):
 
 # commands
 @bot.slash_command()
-@commands.guild_only()
 @commands.has_permissions(administrator=True)
+@commands.guild_only()
 async def switchmode(ctx):
     '''Toggle between Timeout mode and Ban mode'''
     mode = await db.getmode(ctx.guild.id)
@@ -105,8 +105,8 @@ async def switchmode_error(ctx, error):
         raise error
 
 @bot.slash_command()
-@commands.guild_only()
 @commands.has_permissions(administrator=True)
+@commands.guild_only()
 async def timeoutdays(
     ctx,
     days : discord.Option(int, 'Enter the number of days:', min_value=1, max_value=28)
@@ -146,9 +146,9 @@ async def punishments_error(ctx, error):
         raise error
 
 @bot.slash_command()
-@commands.guild_only()
 @commands.bot_has_permissions(send_messages=True)
 @commands.has_permissions(administrator=True)
+@commands.guild_only()
 async def log(ctx):
     '''Set this channel as the logging channel for punishments'''
     await db.set_logging_channel(ctx.guild.id, ctx.channel.id)
@@ -168,8 +168,8 @@ async def log_error(ctx, error):
         raise error
 
 @bot.slash_command()
-@commands.guild_only()
 @commands.has_permissions(administrator=True)
+@commands.guild_only()
 async def stoplog(ctx):
     '''Stop logging punishments to a channel'''
     await db.delete_logging_channel(ctx.guild.id)
@@ -186,8 +186,8 @@ async def stoplog_error(ctx, error):
         raise error
 
 @bot.slash_command()
-@commands.guild_only()
 @commands.has_permissions(administrator=True)
+@commands.guild_only()
 async def whitelist(
     ctx,
     clear : discord.Option(bool, 'Should I clear the whitelist?', default=False)
@@ -202,15 +202,17 @@ async def whitelist(
 @whitelist.error
 async def whitelist_error(ctx, error):
     '''Handle a lack of the Administrator permission'''
-    if isinstance(error, commands.MissingPermissions):
+    if isinstance(error, commands.NoPrivateMessage):
+        await nodm(ctx)
+    elif isinstance(error, commands.MissingPermissions):
         await notadmin(ctx)
     else:
         raise error
 
 @bot.slash_command(guild_ids=[devserver])
-@commands.guild_only()
 @commands.bot_has_permissions(read_message_history=True, send_messages=True, attach_files=True)
 @commands.is_owner()
+@commands.guild_only()
 async def backup(ctx):
     '''Backup the database periodically'''
     if not backup_database.is_running():
