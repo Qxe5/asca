@@ -1,3 +1,3 @@
 tldextract
 urlextract
-py-cord==2.0.0b7
+git+https://github.com/Pycord-Development/pycord.git
