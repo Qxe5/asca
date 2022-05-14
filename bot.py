@@ -197,7 +197,9 @@ async def whitelist(
         await db.clearwhitelist(ctx.guild.id)
         await ctx.respond('Whitelist cleared', ephemeral=True)
     else:
-        await ctx.send_modal(Whitelist(sorted(await db.getwhitelist(ctx.guild.id)), 'Whitelist'))
+        await ctx.send_modal(
+            Whitelist(sorted(await db.getwhitelist(ctx.guild.id)), title='Whitelist')
+        )
 
 @whitelist.error
 async def whitelist_error(ctx, error):
