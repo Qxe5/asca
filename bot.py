@@ -12,7 +12,7 @@ from cogs.status import Status
 from library import db
 from library.backup import backup_db
 from library.detector import process
-from library.error import nodm, cantlog, notadmin, notowner, invalid_days
+from library.error import nodm, cantlog, notowner, invalid_days
 from library.links import update
 from library.reports import reportmessage, getreport
 from library.ui import Whitelist
@@ -80,7 +80,7 @@ async def on_message_edit(previous_message, current_message):
 
 # commands
 @bot.slash_command()
-@commands.has_permissions(administrator=True)
+@discord.default_permissions(administrator=True)
 @discord.guild_only()
 async def switchmode(ctx):
     '''Toggle between Timeout mode and Ban mode'''
@@ -99,13 +99,11 @@ async def switchmode_error(ctx, error):
     '''Handle errors for associated command'''
     if isinstance(error, commands.NoPrivateMessage):
         await nodm(ctx)
-    elif isinstance(error, commands.MissingPermissions):
-        await notadmin(ctx)
     else:
         raise error
 
 @bot.slash_command()
-@commands.has_permissions(administrator=True)
+@discord.default_permissions(administrator=True)
 @discord.guild_only()
 async def timeoutdays(
     ctx,
@@ -123,8 +121,6 @@ async def timeoutdays_error(ctx, error):
     '''Handle errors for associated command'''
     if isinstance(error, commands.NoPrivateMessage):
         await nodm(ctx)
-    elif isinstance(error, commands.MissingPermissions):
-        await notadmin(ctx)
     elif isinstance(error, discord.ApplicationCommandInvokeError):
         await invalid_days(ctx)
     else:
@@ -147,7 +143,7 @@ async def punishments_error(ctx, error):
 
 @bot.slash_command()
 @commands.bot_has_permissions(send_messages=True)
-@commands.has_permissions(administrator=True)
+@discord.default_permissions(administrator=True)
 @discord.guild_only()
 async def log(ctx):
     '''Set this channel as the logging channel for punishments'''
@@ -162,13 +158,11 @@ async def log_error(ctx, error):
         await nodm(ctx)
     elif isinstance(error, commands.BotMissingPermissions):
         await cantlog(ctx)
-    elif isinstance(error, commands.MissingPermissions):
-        await notadmin(ctx)
     else:
         raise error
 
 @bot.slash_command()
-@commands.has_permissions(administrator=True)
+@discord.default_permissions(administrator=True)
 @discord.guild_only()
 async def stoplog(ctx):
     '''Stop logging punishments to a channel'''
@@ -180,13 +174,11 @@ async def stoplog_error(ctx, error):
     '''Handle errors for associated command'''
     if isinstance(error, commands.NoPrivateMessage):
         await nodm(ctx)
-    elif isinstance(error, commands.MissingPermissions):
-        await notadmin(ctx)
     else:
         raise error
 
 @bot.slash_command()
-@commands.has_permissions(administrator=True)
+@discord.default_permissions(administrator=True)
 @discord.guild_only()
 async def whitelist(
     ctx,
@@ -206,8 +198,6 @@ async def whitelist_error(ctx, error):
     '''Handle a lack of the Administrator permission'''
     if isinstance(error, commands.NoPrivateMessage):
         await nodm(ctx)
-    elif isinstance(error, commands.MissingPermissions):
-        await notadmin(ctx)
     else:
         raise error
 

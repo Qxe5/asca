@@ -13,11 +13,6 @@ async def cantlog(ctx, attach=False, history=False):
 
     await ctx.respond(errormessage, ephemeral=True)
 
-async def notadmin(ctx):
-    '''Handle a lack of the Administrator permission'''
-    errormessage = 'Only a member with the `Administrator` permission can run this command'
-    await ctx.respond(errormessage, ephemeral=True)
-
 async def notowner(ctx):
     '''Handle not being the Bot Owner'''
     errormessage = 'Only the `Bot Owner` can run this command'
