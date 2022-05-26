@@ -125,7 +125,7 @@ async def spamcache(message, cached_messages, time):
 
 async def spam(message, cached_messages, maxrepeat=5):
     '''Determine and return whether the message is spam'''
-    return len(await spamcache(message, cached_messages, timedelta(seconds=15))) > maxrepeat
+    return len(await spamcache(message, cached_messages, timedelta(seconds=10))) > maxrepeat
 
 async def scam(message, cached_messages): # pylint: disable=too-many-return-statements
     '''Determine and return whether the message is a scam'''
@@ -253,8 +253,6 @@ async def punish(message):
     has_moderate_members = message.author.guild_permissions.moderate_members
     has_ban_members = message.author.guild_permissions.ban_members
     if has_moderate_members or has_ban_members:
-        response = 'Scam detected but you have the `Moderate Members` or `Ban Members` permission'
-        await reply(message, response)
         return False
 
     mode = await db.getmode(message.guild.id)
