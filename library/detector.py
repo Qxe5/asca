@@ -24,6 +24,7 @@ async def official(link):
     '''Determine and return whether the link is official'''
     official_links = {
         'discord.com',
+        'support.discord.com',
         'discord.gg',
         'discord.gift',
         'discordapp.com',

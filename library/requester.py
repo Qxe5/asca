@@ -17,7 +17,7 @@ async def scamlinks():
 
 async def unshorten(url):
     '''Unshorten and return the URL'''
-    shorteners = {'bit.ly'}
+    shorteners = {'bit.ly', 'rb.gy'}
 
     if urlparse(url).netloc not in shorteners:
         return url
