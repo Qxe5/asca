@@ -121,6 +121,7 @@ async def contains_phonenumber(message):
     phone_numbers = {
         await removewhitespace('+1 (256) 482-1848'),
         await removewhitespace('+1 (518) 952-5213'),
+        await removewhitespace('+1 (531) 254-0859'),
         await removewhitespace('+1 (559) 666‑3967'),
         await removewhitespace('+1 (757) 861‑3217')
     }
