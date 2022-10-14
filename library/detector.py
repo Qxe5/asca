@@ -25,13 +25,17 @@ async def official(link):
     official_links = {
         'discord.com',
         'support.discord.com',
-        'discord.gg',
-        'discord.gift',
         'discordapp.com',
+        'dis.gd',
         'cdn.discordapp.com',
         'media.discordapp.net',
+        'discord.gg',
+        'promos.discord.gg',
+        'discord.gift',
         'discordstatus.com',
-        'dis.gd'
+        'discordjs.guide',
+        'discord.me',
+        'discords.com'
     }
 
     return link in official_links
@@ -105,10 +109,23 @@ async def contains_maliciousterm(message):
         await removewhitespace('i made a game can you test play?'),
         await removewhitespace('i have coded a new game'),
         await removewhitespace('farm cryptocurrency'),
-        await removewhitespace('+1 (256) 482-1848')
+        await removewhitespace('from the crypto market')
     }
 
     return any(term in message for term in terms)
+
+async def contains_phonenumber(message):
+    '''Determine and return whether the message contains a phone number used by a scammer'''
+    message = await removewhitespace(message)
+
+    phone_numbers = {
+        await removewhitespace('+1 (256) 482-1848'),
+        await removewhitespace('+1 (518) 952-5213'),
+        await removewhitespace('+1 (559) 666‑3967'),
+        await removewhitespace('+1 (757) 861‑3217')
+    }
+
+    return any(phone_number in message for phone_number in phone_numbers)
 
 async def spamcache(message, cached_messages, time):
     '''
@@ -184,6 +201,10 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
             if embed.provider.name and (await decyrillic(embed.provider.name)).lower() == 'discord':
                 await reportmessage(report)
                 return True
+
+    if await contains_phonenumber(fmessage):
+        await reportmessage(report)
+        return True
 
     if await spam(message, cached_messages):
         await reportmessage(report)
