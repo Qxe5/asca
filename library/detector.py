@@ -30,6 +30,9 @@ permission_error_template = Template('Scam detected, but I need the `$permission
 async def official(link):
     '''Determine and return whether the link is official'''
     official_links = {
+        'airhorn.solutions',
+        'airhornbot.com',
+        'bigbeans.solutions',
         'dis.gd',
         'discord-activities.com',
         'discord.app',
@@ -46,11 +49,14 @@ async def official(link):
         'discord.tools',
         'discordactivities.com',
         'discordapp.com',
+        'discordapp.io',
         'discordapp.net',
+        'discordcdn.com',
         'discordmerch.com',
         'discordpartygames.com',
         'discordsays.com',
         'discordstatus.com',
+        'watchanimeattheoffice.com',
 
         'discordjs.guide',
         'discord.me',
