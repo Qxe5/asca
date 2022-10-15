@@ -30,22 +30,38 @@ permission_error_template = Template('Scam detected, but I need the `$permission
 async def official(link):
     '''Determine and return whether the link is official'''
     official_links = {
-        'discord.com',
-        'support.discord.com',
-        'discordapp.com',
         'dis.gd',
-        'cdn.discordapp.com',
-        'media.discordapp.net',
+        'discord-activities.com',
+        'discord.app',
+        'discord.co',
+        'discord.com',
+        'discord.design',
+        'discord.dev',
         'discord.gg',
-        'promos.discord.gg',
         'discord.gift',
+        'discord.gifts',
+        'discord.media',
+        'discord.new',
+        'discord.store',
+        'discord.tools',
+        'discordactivities.com',
+        'discordapp.com',
+        'discordapp.net',
+        'discordmerch.com',
+        'discordpartygames.com',
+        'discordsays.com',
         'discordstatus.com',
+
         'discordjs.guide',
         'discord.me',
         'discords.com'
     }
 
-    return link in official_links
+    for official_link in official_links:
+        if link == official_link or link.endswith(f'.{official_link}'):
+            return True
+
+    return False
 
 async def decyrillic(text):
     '''Transform Cyrillic into ASCII and return the transformation'''
