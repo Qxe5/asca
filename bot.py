@@ -11,7 +11,7 @@ from discord.ext import tasks, commands
 from cogs.status import Status
 from library import db
 from library.backup import backup_db
-from library.detector import process
+from library.detector import Secrets, process
 from library.error import nodm, cantlog, notowner, invalid_days
 from library.links import update
 from library.reports import reportmessage, getreport
@@ -254,6 +254,9 @@ async def report(ctx, message):
 bot.add_cog(Status(bot))
 
 # authenticate
+while not Secrets.safebrowsing:
+    Secrets.safebrowsing = getpass('Safe Browsing API Key: ')
+
 try:
     bot.run(getpass('Token: '))
 except discord.LoginFailure as loginfailure:

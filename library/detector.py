@@ -1,5 +1,6 @@
 '''Scam detection and punishment'''
 from asyncio import Lock, sleep
+from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from difflib import SequenceMatcher
 from re import search
@@ -8,6 +9,7 @@ from urllib.parse import urlparse
 
 from discord import Embed, Colour, DMChannel, User, Forbidden, NotFound, HTTPException
 from discord.utils import remove_markdown
+from pysafebrowsing import SafeBrowsing
 from tldextract import extract
 from urlextract import URLExtract
 
@@ -15,6 +17,11 @@ from library import db
 from library.links import links
 from library.reports import reportmessage
 from library.requester import unshorten
+
+@dataclass
+class Secrets:
+    '''Storage of secrets'''
+    safebrowsing : str = None
 
 deletelock = Lock()
 permission_error_template = Template('Scam detected, but I need the `$permission` permission '
@@ -194,6 +201,12 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
         fmessage = fmessage.replace(url, '')
 
     if message_links:
+        if any(
+            result['malicious'] for result in
+            SafeBrowsing(Secrets.safebrowsing).lookup_urls(tuple(message_links)).values()
+        ):
+            return True
+
         if await contains_maliciousterm(fmessage):
             await reportmessage(report)
             return True
