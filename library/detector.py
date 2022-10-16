@@ -35,7 +35,6 @@ async def official(link):
         'bigbeans.solutions',
         'dis.gd',
         'discord-activities.com',
-        'discord.app',
         'discord.co',
         'discord.com',
         'discord.design',
@@ -58,6 +57,7 @@ async def official(link):
         'discordstatus.com',
         'watchanimeattheoffice.com',
 
+        'discord.app',
         'discordjs.guide',
         'discord.me',
         'discords.com'
