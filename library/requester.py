@@ -6,7 +6,7 @@ import aiohttp
 
 async def scamlinks():
     '''Retrieve and return the scam links or None on failure'''
-    source = 'https://raw.githubusercontent.com/DevSpen/scam-links/master/src/links.txt'
+    source = 'https://raw.githubusercontent.com/Discord-AntiScam/scam-links/main/list.txt'
 
     async with aiohttp.ClientSession(raise_for_status=True) as client:
         try:
