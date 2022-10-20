@@ -126,7 +126,9 @@ async def contains_invite(code):
     '''Determine and return whether the invite code is malicious'''
     codes = {
         'eesex',
-        'family-hub'
+        'family-hub',
+        'tiktok18',
+        'boobis'
     }
 
     return code in codes
