@@ -122,6 +122,15 @@ async def removewhitespace(message):
     '''Remove whitespace from message and return it'''
     return ''.join(message.split())
 
+async def contains_invite(code):
+    '''Determine and return whether the invite code is malicious'''
+    codes = {
+        'eesex',
+        'family-hub'
+    }
+
+    return code in codes
+
 async def contains_maliciousterm(message):
     '''Determine and return whether the message contains a malicious term'''
     message = await removewhitespace(message)
@@ -175,7 +184,7 @@ async def spam(message, cached_messages, maxrepeat=5):
     '''Determine and return whether the message is spam'''
     return len(await spamcache(message, cached_messages, timedelta(seconds=10))) > maxrepeat
 
-async def scam(message, cached_messages): # pylint: disable=too-many-return-statements
+async def scam(message, cached_messages): # pylint: disable=too-many-branches, too-many-return-statements
     '''Determine and return whether the message is a scam'''
     fmessage = remove_markdown(message.content.replace('http', ' http').replace('://\n', '://'))
 
@@ -214,9 +223,11 @@ async def scam(message, cached_messages): # pylint: disable=too-many-return-stat
 
     for url in urls:
         parsedurl = urlparse(url)
-        parsedurl = parsedurl.path + parsedurl.query
 
-        if any(ext in parsedurl for ext in ('.exe', '.msi', '.zip', '.rar')):
+        if parsedurl.netloc == 'discord.gg' and await contains_invite(parsedurl.path.lstrip('/')):
+            return True
+
+        if any(ext in parsedurl.path + parsedurl.query for ext in ('.exe', '.msi', '.zip', '.rar')):
             await reportmessage(report)
             return True
 
