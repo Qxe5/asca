@@ -242,7 +242,10 @@ async def reports_error(ctx, error):
 @bot.slash_command()
 async def servers(ctx):
     '''Get the server count of the bot'''
-    await ctx.respond(f'{len(bot.guilds)} Servers', ephemeral=True)
+    await ctx.respond(
+        f'{len(bot.guilds)} Servers ({sum(guild.member_count for guild in bot.guilds)} Members)',
+        ephemeral=True
+    )
 
 @bot.message_command(name='Report as scam')
 async def report(ctx, message):
