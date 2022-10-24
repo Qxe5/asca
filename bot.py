@@ -12,7 +12,7 @@ from cogs.status import Status
 from library import db
 from library.backup import backup_db
 from library.detector import Secrets, process
-from library.error import nodm, cantlog, notowner, invalid_days
+from library.error import cantlog, notowner, invalid_days
 from library.links import update
 from library.reports import reportmessage, getreport
 from library.ui import Whitelist
@@ -79,9 +79,8 @@ async def on_message_edit(previous_message, current_message):
         await process(current_message, bot.cached_messages)
 
 # commands
-@bot.slash_command()
+@bot.slash_command(guild_only=True)
 @discord.default_permissions(administrator=True)
-@commands.guild_only()
 async def switchmode(ctx):
     '''Toggle between Timeout mode and Ban mode'''
     mode = await db.getmode(ctx.guild.id)
@@ -94,17 +93,8 @@ async def switchmode(ctx):
             await db.set_timeoutmode(ctx.guild.id)
             await ctx.respond('Timeout mode set', ephemeral=True)
 
-@switchmode.error
-async def switchmode_error(ctx, error):
-    '''Handle errors for associated command'''
-    if isinstance(error, commands.NoPrivateMessage):
-        await nodm(ctx)
-    else:
-        raise error
-
-@bot.slash_command()
+@bot.slash_command(guild_only=True)
 @discord.default_permissions(administrator=True)
-@commands.guild_only()
 async def timeoutdays(
     ctx,
     days : discord.Option(int, 'Enter the number of days:', min_value=1, max_value=28)
@@ -119,32 +109,20 @@ async def timeoutdays(
 @timeoutdays.error
 async def timeoutdays_error(ctx, error):
     '''Handle errors for associated command'''
-    if isinstance(error, commands.NoPrivateMessage):
-        await nodm(ctx)
-    elif isinstance(error, discord.ApplicationCommandInvokeError):
+    if isinstance(error, discord.ApplicationCommandInvokeError):
         await invalid_days(ctx)
     else:
         raise error
 
-@bot.slash_command()
-@commands.guild_only()
+@bot.slash_command(guild_only=True)
 async def punishments(ctx):
     '''Get the punishment count for this guild'''
     count = await db.get_punishment_count(ctx.guild.id)
     await ctx.respond(f'{count} Timeouts / Bans for this server', ephemeral=True)
 
-@punishments.error
-async def punishments_error(ctx, error):
-    '''Handle a disallowed DM invocation'''
-    if isinstance(error, commands.NoPrivateMessage):
-        await nodm(ctx)
-    else:
-        raise error
-
-@bot.slash_command()
+@bot.slash_command(guild_only=True)
 @commands.bot_has_permissions(send_messages=True)
 @discord.default_permissions(administrator=True)
-@commands.guild_only()
 async def log(ctx):
     '''Set this channel as the logging channel for punishments'''
     await db.set_logging_channel(ctx.guild.id, ctx.channel.id)
@@ -154,32 +132,20 @@ async def log(ctx):
 @log.error
 async def log_error(ctx, error):
     '''Handle errors for associated command'''
-    if isinstance(error, commands.NoPrivateMessage):
-        await nodm(ctx)
-    elif isinstance(error, commands.BotMissingPermissions):
+    if isinstance(error, commands.BotMissingPermissions):
         await cantlog(ctx)
     else:
         raise error
 
-@bot.slash_command()
+@bot.slash_command(guild_only=True)
 @discord.default_permissions(administrator=True)
-@commands.guild_only()
 async def stoplog(ctx):
     '''Stop logging punishments to a channel'''
     await db.delete_logging_channel(ctx.guild.id)
     await ctx.respond('I will no longer log punishments to a channel', ephemeral=True)
 
-@stoplog.error
-async def stoplog_error(ctx, error):
-    '''Handle errors for associated command'''
-    if isinstance(error, commands.NoPrivateMessage):
-        await nodm(ctx)
-    else:
-        raise error
-
-@bot.slash_command()
+@bot.slash_command(guild_only=True)
 @discord.default_permissions(administrator=True)
-@commands.guild_only()
 async def whitelist(
     ctx,
     clear : discord.Option(bool, 'Should I clear the whitelist?', default=False)
@@ -193,18 +159,9 @@ async def whitelist(
             Whitelist(sorted(await db.getwhitelist(ctx.guild.id)), title='Whitelist')
         )
 
-@whitelist.error
-async def whitelist_error(ctx, error):
-    '''Handle a lack of the Administrator permission'''
-    if isinstance(error, commands.NoPrivateMessage):
-        await nodm(ctx)
-    else:
-        raise error
-
-@bot.slash_command(guild_ids=[devserver])
+@bot.slash_command(guild_only=True, guild_ids=[devserver])
 @commands.bot_has_permissions(read_message_history=True, send_messages=True, attach_files=True)
 @commands.is_owner()
-@commands.guild_only()
 async def backup(ctx):
     '''Backup the database periodically'''
     if not backup_database.is_running():
@@ -216,9 +173,7 @@ async def backup(ctx):
 @backup.error
 async def backup_error(ctx, error):
     '''Handle errors for associated command'''
-    if isinstance(error, commands.NoPrivateMessage):
-        await nodm(ctx)
-    elif isinstance(error, commands.BotMissingPermissions):
+    if isinstance(error, commands.BotMissingPermissions):
         await cantlog(ctx, attach=True, history=True)
     elif isinstance(error, commands.NotOwner):
         await notowner(ctx)
