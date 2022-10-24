@@ -130,7 +130,8 @@ async def contains_invite(code):
         'tiktok18',
         'boobis',
         'anastasynudes',
-        'esexies'
+        'esexies',
+        'kQWvAJXu27'
     }
 
     return code in codes
@@ -156,8 +157,11 @@ async def contains_maliciousterm(message):
 
     return any(term in message for term in terms)
 
-async def contains_phonenumber(message):
-    '''Determine and return whether the message contains a phone number used by a scammer'''
+async def contains_passthrough_maliciousterm(message):
+    '''
+    Determine and return whether the message contains a malicious term
+    which can be punished without a link
+    '''
     message = await removewhitespace(message)
 
     phone_numbers = {
@@ -165,7 +169,8 @@ async def contains_phonenumber(message):
         await removewhitespace('+1 (518) 952-5213'),
         await removewhitespace('+1 (531) 254-0859'),
         await removewhitespace('+1 (559) 666‑3967'),
-        await removewhitespace('+1 (757) 861‑3217')
+        await removewhitespace('+1 (757) 861‑3217'),
+        await removewhitespace('on how to earn')
     }
 
     return any(phone_number in message for phone_number in phone_numbers)
@@ -253,7 +258,7 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
                 await reportmessage(report)
                 return True
 
-    if await contains_phonenumber(fmessage):
+    if await contains_passthrough_maliciousterm(fmessage):
         await reportmessage(report)
         return True
 
