@@ -159,9 +159,8 @@ async def whitelist(
             Whitelist(sorted(await db.getwhitelist(ctx.guild.id)), title='Whitelist')
         )
 
-@bot.slash_command(guild_only=True, guild_ids=[devserver])
 @commands.bot_has_permissions(read_message_history=True, send_messages=True, attach_files=True)
-@commands.is_owner()
+@bot.slash_command(guild_ids=[devserver], checks=[lambda ctx: bot.is_owner(ctx.author)])
 async def backup(ctx):
     '''Backup the database periodically'''
     if not backup_database.is_running():
@@ -175,13 +174,12 @@ async def backup_error(ctx, error):
     '''Handle errors for associated command'''
     if isinstance(error, commands.BotMissingPermissions):
         await cantlog(ctx, attach=True, history=True)
-    elif isinstance(error, commands.NotOwner):
+    elif isinstance(error, discord.CheckFailure):
         await notowner(ctx)
     else:
         raise error
 
-@bot.slash_command(guild_ids=[devserver])
-@commands.is_owner()
+@bot.slash_command(guild_ids=[devserver], checks=[lambda ctx: bot.is_owner(ctx.author)])
 async def reports(ctx):
     '''Get the next report'''
     await ctx.respond(await getreport(), ephemeral=True)
@@ -189,7 +187,7 @@ async def reports(ctx):
 @reports.error
 async def reports_error(ctx, error):
     '''Handle not being the Bot Owner'''
-    if isinstance(error, commands.NotOwner):
+    if isinstance(error, discord.CheckFailure):
         await notowner(ctx)
     else:
         raise error
