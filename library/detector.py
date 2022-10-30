@@ -194,7 +194,7 @@ async def spam(message, cached_messages, maxrepeat=5):
     return len(await spamcache(message, cached_messages, timedelta(seconds=10))) > maxrepeat
 
 async def scam(message, cached_messages): # pylint: disable=too-many-branches, too-many-return-statements
-    '''Determine and return whether the message is a scam'''
+    '''Determine and return whether the message is a scam, returns 'Spam' if the message is spam'''
     fmessage = remove_markdown(message.content.replace('http', ' http').replace('://\n', '://'))
 
     link_extractor = URLExtract()
@@ -264,7 +264,7 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
 
     if await spam(message, cached_messages):
         await reportmessage(report)
-        return True
+        return 'Spam'
 
     return False
 
@@ -322,7 +322,7 @@ async def prune(messages):
             await delete(message)
             await sleep(5)
 
-async def punish(message):
+async def punish(message, is_spam):
     '''Punish the member which sent the message and return whether the punishment was succesfull'''
     if isinstance(message.author, User):
         await delete(message)
@@ -334,7 +334,7 @@ async def punish(message):
         return False
 
     mode = await db.getmode(message.guild.id)
-    reason = f'They sent "{message.content}"'
+    reason = f'They {"spammed" if is_spam else "sent"} "{message.content}"'
 
     match mode:
         case db.MODES.TIMEOUT:
@@ -342,7 +342,7 @@ async def punish(message):
         case db.MODES.BAN:
             return await ban(message, reason)
 
-async def log(message):
+async def log(message, is_spam):
     '''Logs the punishment'''
     await db.count_punishment(message.guild.id)
 
@@ -368,6 +368,9 @@ async def log(message):
             title = f'{action} {message.author}'
             logembed.set_author(icon_url=message.author.display_avatar.url, name=title)
 
+            if is_spam:
+                logembed.add_field(name='Note', value='This message was spammed')
+
             logembed.add_field(name='Mention', value=message.author.mention)
 
             icon_url = ('https://cdn.discordapp.com'
@@ -386,6 +389,7 @@ async def process(message, cached_messages):
     if message.author.bot or isinstance(message.channel, DMChannel):
         return
 
-    if await scam(message, cached_messages) and await punish(message):
-        await log(message)
+    if ((is_scam := await scam(message, cached_messages))
+        and await punish(message, is_scam == 'Spam')):
+        await log(message, is_scam == 'Spam')
         await prune(await spamcache(message, cached_messages, timedelta.max))
