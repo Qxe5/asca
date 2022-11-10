@@ -226,9 +226,9 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
     fmessage = await decyrillic(fmessage.lower())
 
     message_links = {
-        message_link
+        message_link.lower()
         for message_link in {urlparse(url).netloc for url in urls}
-        if not await official(message_link)
+        if not await official(message_link.lower())
     }
     report = '\n'.join(message_links)
 
