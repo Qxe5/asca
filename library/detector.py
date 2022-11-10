@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 from discord import Embed, Colour, DMChannel, User, Forbidden, NotFound, HTTPException
 from discord.utils import remove_markdown
 from pysafebrowsing import SafeBrowsing
+from pysafebrowsing.api import SafeBrowsingWeirdError
 from tldextract import extract
 from urlextract import URLExtract
 
@@ -175,6 +176,19 @@ async def contains_passthrough_maliciousterm(message):
 
     return any(phone_number in message for phone_number in phone_numbers)
 
+async def unsafe(urls):
+    '''Determine and return whether the URLs are unsafe'''
+    if not urls:
+        return False
+
+    try:
+        return any(
+            result['malicious']
+            for result in SafeBrowsing(Secrets.safebrowsing).lookup_urls(tuple(urls)).values()
+        )
+    except SafeBrowsingWeirdError as error:
+        await unsafe(urls - {str(error).rsplit(' ', maxsplit=1)[-1]})
+
 async def spamcache(message, cached_messages, time):
     '''
     Get and return possible spam messages from the current message and the cached messages,
@@ -243,10 +257,7 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
         fmessage = fmessage.replace(url, '')
 
     if message_links:
-        if any(
-            result['malicious'] for result in
-            SafeBrowsing(Secrets.safebrowsing).lookup_urls(tuple(message_links)).values()
-        ):
+        if await unsafe(message_links):
             return True
 
         if await contains_maliciousterm(fmessage):
