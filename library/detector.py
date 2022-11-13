@@ -73,26 +73,23 @@ async def official(link):
 async def decyrillic(text):
     '''Transform Cyrillic into ASCII and return the transformation'''
     replacements = {
-        ('з', '3'),
-        ('ч', '4'),
-        ('а', 'a'),
-        ('в', 'b'),
-        ('с', 'c'),
-        ('е', 'e'),
-        ('н', 'h'),
-        ('к', 'k'),
-        ('м', 'm'),
-        ('о', 'o'),
-        ('р', 'p'),
-        ('т', 't'),
-        ('х', 'x'),
-        ('у', 'y')
+        'з' : '3',
+        'ч' : '4',
+        'а' : 'a',
+        'в' : 'b',
+        'с' : 'c',
+        'е' : 'e',
+        'н' : 'h',
+        'к' : 'k',
+        'м' : 'm',
+        'о' : 'o',
+        'р' : 'p',
+        'т' : 't',
+        'х' : 'x',
+        'у' : 'y'
     }
 
-    for replacement in replacements:
-        text = text.replace(*replacement)
-
-    return text
+    return text.translate(str.maketrans(replacements))
 
 async def slash(message, tlds):
     '''Insert a forward slash into the message after TLDs not succeeded by one and return it'''
