@@ -127,6 +127,7 @@ async def contains_invite(code):
         'eesex',
         'family-hub',
         'tiktok18',
+        'tiktok-xxx',
         'boobis',
         'anastasynudes',
         'esexies',
