@@ -1,5 +1,6 @@
 '''Scam detection and punishment'''
 from asyncio import Lock, sleep
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from difflib import SequenceMatcher
@@ -278,10 +279,8 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
 
 async def reply(message, replymessage):
     '''Reply to a message with a reply'''
-    try:
+    with suppress(Forbidden, HTTPException):
         await message.reply(replymessage, mention_author=False)
-    except (Forbidden, HTTPException):
-        pass
 
 async def timeout(message, reason):
     '''
