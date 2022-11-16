@@ -331,7 +331,7 @@ async def prune(messages):
             await sleep(5)
 
 async def punish(message, is_spam):
-    '''Punish the member which sent the message and return whether the punishment was succesfull'''
+    '''Punish the member which sent the message and return whether the punishment was successful'''
     if isinstance(message.author, User):
         await delete(message)
         return False
