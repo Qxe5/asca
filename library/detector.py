@@ -363,12 +363,10 @@ async def log(message, is_spam):
             scam_message = message.content.replace('`', '')
 
             mode = await db.getmode(message.guild.id)
-
-            match mode:
-                case db.MODES.TIMEOUT:
-                    action = 'Timed out'
-                case db.MODES.BAN:
-                    action = 'Banned'
+            action = {
+                db.MODES.TIMEOUT : 'Timed out',
+                db.MODES.BAN     : 'Banned'
+            }[mode]
 
             description = f'**Message**```\n{scam_message}```'
             logembed = Embed(colour=Colour.red(), description=description)
