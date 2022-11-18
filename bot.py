@@ -1,4 +1,5 @@
 '''Entry point'''
+from asyncio import sleep
 from getpass import getpass
 import logging
 from os import environ as env
@@ -8,7 +9,6 @@ import sys
 import discord
 from discord.ext import tasks, commands
 
-from cogs.status import Status
 from library import db
 from library.backup import backup_db
 from library.detector import Secrets, process
@@ -60,6 +60,19 @@ async def update_scamlinks():
     await update()
 
 update_scamlinks.start()
+
+@tasks.loop(hours=1)
+async def update_status():
+    '''Update status'''
+    await bot.wait_until_ready()
+
+    await bot.change_presence(activity=discord.Game('by Dot and friends'))
+    await sleep(60)
+    await bot.change_presence(
+        activity=discord.Activity(type=discord.ActivityType.listening, name='/')
+    )
+
+update_status.start()
 
 @tasks.loop(hours=1)
 async def backup_database(channel):
@@ -205,9 +218,6 @@ async def report(ctx, message):
     '''Report the message as a scam'''
     await reportmessage(message.content)
     await ctx.respond('Thank you, your report will be processed shortly', ephemeral=True)
-
-# add cogs
-bot.add_cog(Status(bot))
 
 # authenticate
 while not Secrets.safebrowsing:
