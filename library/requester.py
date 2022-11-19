@@ -15,16 +15,20 @@ async def scamlinks():
         except (aiohttp.ClientConnectionError, aiohttp.ClientResponseError, asyncio.TimeoutError):
             return None
 
-async def unshorten(url):
-    '''Unshorten and return the URL'''
+async def unshorten(client, url):
+    '''Unshorten and return the URL via the client'''
     shorteners = {'7r6.com', 'bit.ly', 'goo.su', 'rb.gy', 'shorturl.at', 'u.to'}
 
     if urlparse(url).netloc not in shorteners:
         return url
 
+    try:
+        async with client.head(url, allow_redirects=True, timeout=8) as response:
+            return response.url.human_repr()
+    except (aiohttp.ClientConnectionError, aiohttp.ClientResponseError, asyncio.TimeoutError):
+        return url
+
+async def redirect(urls):
+    '''Unshorten and return the URLs'''
     async with aiohttp.ClientSession(raise_for_status=True) as client:
-        try:
-            async with client.head(url, allow_redirects=True, timeout=8) as response:
-                return response.url.human_repr()
-        except (aiohttp.ClientConnectionError, aiohttp.ClientResponseError, asyncio.TimeoutError):
-            return url
+        return {await unshorten(client, url) for url in urls}

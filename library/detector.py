@@ -18,7 +18,7 @@ from urlextract import URLExtract
 from library import db
 from library.links import links
 from library.reports import reportmessage
-from library.requester import unshorten
+from library.requester import redirect
 
 @dataclass
 class Secrets:
@@ -216,11 +216,10 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
     tlds = {tld for tld in link_extractor._load_cached_tlds() if tld in fmessage} # pylint: disable=protected-access
     fmessage = await slash(fmessage, tlds)
 
-    urls = {
-        await unshorten(await protocol(url))
-        for url in link_extractor.find_urls(fmessage, only_unique=True)
+    urls = await redirect({
+        await protocol(url) for url in link_extractor.find_urls(fmessage, only_unique=True)
         if not any(url.startswith(entry) for entry in await db.getwhitelist(message.guild.id))
-    }
+    })
 
     fmessage = await decyrillic(fmessage.lower())
 
