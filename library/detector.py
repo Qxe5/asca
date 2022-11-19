@@ -131,6 +131,7 @@ async def contains_invite(code):
         'boobis',
         'anastasynudes',
         'esexies',
+        'e-sexies',
         'kQWvAJXu27'
     }
 
