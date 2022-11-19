@@ -13,5 +13,4 @@ async def backup_db(channel, guilds):
     await channel.purge()
 
     with open(DATABASE, mode='rb') as database_file:
-        file = File(database_file, filename='database')
-        await channel.send(file=file)
+        await channel.send(file=File(database_file, filename='database'))
