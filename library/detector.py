@@ -62,7 +62,8 @@ async def official(link):
         'discord.app',
         'discordjs.guide',
         'discord.me',
-        'discords.com'
+        'discords.com',
+        'ondiscord.xyz'
     }
 
     for official_link in official_links:
