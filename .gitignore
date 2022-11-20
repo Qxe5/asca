@@ -1,5 +1,5 @@
 .DS_Store
 database/database
 .vscode/
+.devcontainer/
 __pycache__/
-.venv/
