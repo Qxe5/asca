@@ -14,6 +14,7 @@ from pysafebrowsing import SafeBrowsing
 from pysafebrowsing.api import SafeBrowsingWeirdError
 from tldextract import extract
 from urlextract import URLExtract
+import validators
 
 from library import db
 from library.links import links
@@ -179,16 +180,13 @@ async def contains_passthrough_maliciousterm(message):
 
 async def unsafe(urls):
     '''Determine and return whether the URLs are unsafe'''
-    if not urls:
-        return False
-
     try:
         return any(
             result['malicious']
             for result in SafeBrowsing(Secrets.safebrowsing).lookup_urls(tuple(urls)).values()
         )
-    except SafeBrowsingWeirdError as error:
-        await unsafe(urls - {str(error).rsplit(' ', maxsplit=1)[-1]})
+    except SafeBrowsingWeirdError:
+        return False
 
 async def spamcache(message, cached_messages, time):
     '''
@@ -223,6 +221,12 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
         if not any(url.startswith(entry) for entry in await db.getwhitelist(message.guild.id))
     })
 
+    for url in urls:
+        try:
+            validators.url(url)
+        except validators.ValidationFailure:
+            urls.remove(url)
+
     fmessage = await decyrillic(fmessage.lower())
 
     message_links = {
@@ -231,6 +235,9 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
         if not await official(message_link.lower())
     }
     report = '\n'.join(message_links)
+
+    if await unsafe(urls):
+        return True
 
     for message_link in message_links:
         domain = extract(message_link).domain
@@ -257,9 +264,6 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
         fmessage = fmessage.replace(url, '')
 
     if message_links:
-        if await unsafe(message_links):
-            return True
-
         if await contains_maliciousterm(fmessage):
             await reportmessage(report)
             return True
