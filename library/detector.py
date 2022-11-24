@@ -236,7 +236,7 @@ async def scam(message, cached_messages): # pylint: disable=too-many-branches, t
     }
     report = '\n'.join(message_links)
 
-    if await unsafe(urls):
+    if urls and await unsafe(urls):
         return True
 
     for message_link in message_links:
